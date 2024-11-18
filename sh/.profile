@@ -1,21 +1,52 @@
-PROMPT_COMMAND='PS1_PATH=sh:$(sed "s:\([^/\.]\)[^/]*/:\1/:g" <<< ${PWD/#$HOME/u/et})' 
-export PS1='$PS1_PATH> '
+# ~/.profile: executed by the command interpreter for login shells.
+# Not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
+# see /usr/share/doc/bash/examples/startup-files for examples.
 
-export PATH="$PATH:/opt/homebrew/bin"
-export PATH="$PATH:/opt/homebrew/sbin"
-export PATH="$PATH:~/.local/bin"
-export PATH="$PATH:~/.ghcup/bin"
+# if running bash
+if [ -n "$BASH_VERSION" ]; then
+    # include .bashrc if it exists
+    if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+    fi
+fi
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# set PATH
+if [ -d "$HOME/bin" ] ; then
+    export PATH="$HOME/bin:$PATH"
+fi
 
-export PATH="$PATH:$NVM_DIR/versions/node/v18.19.0/bin"
+if [ -d "$HOME/.local/bin" ] ; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
+if [ -d "/opt/homebrew/bin" ] ; then
+    export PATH="/opt/homebrew/bin:$PATH"
+fi
+
+if [ -d "/opt/homebrew/sbin" ] ; then
+    export PATH="/opt/homebrew/sbin:$PATH"
+fi
+
+if [ -d "$HOME/.nvm" ] ; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # load nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # nvm bash_completion
+fi
+
+# Source environment secrets
+if [ -d "$HOME/.env" ] ; then
+    source "$HOME/.env"
+    echo $PING_ENV
+fi
 
 scheme() {
   chez "$@"
 }
 export -f scheme
 
-source "$HOME/.env"
-echo $PING_ENV
+PROMPT_COMMAND='PS1_PATH=sh:$(sed "s:\([^/\.]\)[^/]*/:\1/:g" <<< ${PWD/#$HOME/u/et})'
+export PS1='$PS1_PATH>'
+
+echo "Sourced ~/.profile"
+#serv
+

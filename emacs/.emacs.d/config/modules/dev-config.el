@@ -3,22 +3,22 @@
 ;==============================================================================
 (require 'utils)
 
-(defun init-dev (stem langs)
+(defun et-init-dev (stem langs)
   "Initialize development environments"
-  (init-prog)
+  (et-init-prog)
   (mapc (lambda (sym) (funcall (symbol-function sym))) langs))
 
 ;==============================================================================
 ;; General programming config
 
-(defun schemify (a-lisp2-mode-map)
+(defun et-schemify-mode-map (a-lisp2-mode-map)
   (progn (define-key a-lisp2-mode-map (kbd "C-M-y")		     
 		     (lambda () (interactive)
 		       (progn (insert "(lambda ())") (backward-char 2))))
 	 (define-key a-lisp2-mode-map (kbd "C-M-;")
 		     (lambda () (interactive) (progn (insert "funcall "))))))
 
-(defun init-prog ()
+(defun et-init-prog ()
   "Initialize all programming modes"
   (message "Initializing prog modes")
   (use-package magit)
@@ -78,7 +78,7 @@
 		      ("funcall " . ?:)
 		      ))
 	      (prettify-symbols-mode 1)
-	      (schemify emacs-lisp-mode-map)	    
+	      (et-schemify-mode-map emacs-lisp-mode-map)	    
 	      )))
 
 ;===============================================================================
@@ -147,8 +147,8 @@
     (add-hook 'mrepl-mode-hook 'company-mode)
     (sly-symbol-completion-mode -1)
     (add-hook 'sly-mode-hook 'company-mode)
-    (schemify lisp-mode-map)
-    (schemify sly-mode-map))
+    (et-schemify-mode-map lisp-mode-map)
+    (et-schemify-mode-map sly-mode-map))
   (use-package sly-quicklisp))
 
 (use-package paredit

@@ -2,7 +2,7 @@
 ;; Org Mode configuration
 (require 'utils)
 ;==============================================================================
-(defun make-org-env (stem)  
+(defun et-make-org-env (stem)  
   (let ((top (concat stem (if (eq system-type 'darwin) "cloud/org/" "org/"))))
     (progn (setq org-directory top)
 	   (lambda (key)
@@ -13,8 +13,8 @@
 		     (dir (make-directory path))
 		     (t (error "No matching org directory"))))))))
 
-(defun init-org (stem)
-  (let ((org-env (make-org-env stem)))
+(defun et-init-org (stem)
+  (let ((org-env (et-make-org-env stem)))
     (interactive)
     (define-prefix-command 'et/org-map)
     (global-set-key (kbd "S-<return>") 'open-line)
@@ -22,10 +22,10 @@
     (use-package org-superstar)
     (use-package org      
       :config
-      (setup-org-time    org-env)
-      (setup-org-babel   org-env)
-      (setup-org-edit    org-env)
-      (setup-org-capture org-env)
+      (et-init-org-time    org-env)
+      (et-init-org-babel   org-env)
+      (et-init-org-edit    org-env)
+      (et-init-org-capture org-env)
       (setq org-startup-indented t)
       (add-hook 'after-init-hook 'et-go-home)
       (global-set-key (kbd "M-s-h") 'et-go-home)
@@ -56,9 +56,15 @@
             ("C-n" . org-next-visible-heading)
             ("C-p" . org-previous-visible-heading)))))
 
-(defun setup-org-time (env)
+(defun et-init-org-time (env)
   (progn
-    (setq diary-file (concat (: env 'time) ".diary/diary.org"))
+    (setq diary-file (concat (funcall env 'time) ".diary/diary.org"))
+    (let ((diarydir (file-name-directory diary-file)))
+      (progn
+	(unless (file-exists-p diarydir)
+	  (make-directory diarydir t))
+	(unless (file-exists-p diary-file)
+	  (write-region "" nil diary-file)))))
     (setq calendar-date-style 'iso
           diary-show-holidays-flag nil
           calendar-mark-diary-entries-flag t
@@ -84,8 +90,8 @@
             ("{*}" . (:foreground "#9cfdcd" :weight bold))))
     (setq org-agenda-include-diary t)
     (setq org-agenda-files
-          (append (file-expand-wildcards (concat (: env 'docs) "*.org"))
-                  (file-expand-wildcards (concat (: env 'time) "*.org"))))
+          (append (file-expand-wildcards (concat (funcall env 'docs) "*.org"))
+                  (file-expand-wildcards (concat (funcall env 'time) "*.org"))))
     (setq org-agenda-prefix-format
 	  '((agenda . " %?-12t% s ")
             (todo . " %i ");%?-12:c")
@@ -124,41 +130,41 @@
     ;;                           (setq left-fringe-width 0 right-fringe-width 0)
     ;;                           (setq left-margin-width 2 right-margin-width 0)
     ;;                           (set-window-buffer nil (current-buffer)))))
-    ))
+    )
 
 (defun et-go-home ()
   (interactive)
   (org-agenda nil "n")
   (delete-other-windows))
 
-(defun setup-org-capture (env)
+(defun et-init-org-capture (env)
   (setq org-capture-templates
       '(("n" "Note" entry
-	 (file+datetree (concat (: env 'docs) "notes.org"))
+	 (file+datetree (concat (funcall env 'docs) "notes.org"))
          "* %U\n %?\ncf.: %a"
 	 :empty-lines 1)
 	("e" "Event" entry
-	 (file+headline (concat (: env 'time) "events.org") "Calendar")
+	 (file+headline (concat (funcall env 'time) "events.org") "Calendar")
          "* %^T %^{Event}"
 	 :empty-lines 1)
 	("m" "Meeting" entry
-	 (file+headline (concat (: env 'time) "events.org") "Meetings")
+	 (file+headline (concat (funcall env 'time) "events.org") "Meetings")
          "** %^T Meet with %^{With} about %^{About}\n*** Notes:\n%?"
 	 :empty-lines 1)
 	("t" "Task" entry
-	 (file+headline (concat (: env 'time) "tasks.org") "Tasks")
+	 (file+headline (concat (funcall env 'time) "tasks.org") "Tasks")
          "* { } [#%^{Priority}] %?%i"
 	 :empty-lines 1)
 	("p" "Project" entry
-	 (file (concat (: env 'docs) "make.org"))
+	 (file (concat (funcall env 'docs) "make.org"))
          "* %^{Headline}\nDEADLINE: %^t\n** Summary:\n%?\n** Notes\n"
 	 :empty-lines 1)
 	("l" "Log" entry
-	 (file+datetree+prompt (concat (: env 'time) "log.org"))
+	 (file+datetree+prompt (concat (funcall env 'time) "log.org"))
          "* %T%i"
 	 :empty-lines 1)
 	("w" "Weigh-in" entry
-	 (file+headline (concat (: env 'self) "diet.org") "Logs")
+	 (file+headline (concat (funcall env 'self) "diet.org") "Logs")
          "** { } %t
 %^{Weight}p
 |-------+------+-------+--------+--------+--------+--------+------+------+-------+------|
@@ -187,7 +193,7 @@
    #+TBLFM: @>$8=vsum(@2$8..@-I$8)::@>$9=vsum(@2$9..@-I$9)
    #+TBLFM: @>$10=vsum(@2$10..@-I$10)::@>$11=vsum(@2$11..@-I$11)")
 
-(defun setup-org-babel (env)
+(defun et-init-org-babel (env)
   ;;; Babel
   ;(add-to-list 'load-path "~/.emacs.d/config/packages/ob-racket.el")
   (setq org-confirm-babel-evaluate nil)
@@ -201,7 +207,7 @@
      (java . t))))
   ;(setq org-babel-command:racket "/opt/homebrew/bin/racket"))
 
-(defun setup-org-edit (env)
+(defun et-init-org-edit (env)
   (visual-line-mode)
   (org-indent-mode)
   ;(setq org-hide-emphasis-markers nil)
@@ -212,7 +218,7 @@
   (setq org-return-follows-link  t)
   (setq org-cycle-separator-lines 1)
   (setq org-footnote-auto-adjust 't)
-  (setq org-cite-global-bibliography (list (concat (: env 'docs) "/lib.bib")))
+  (setq org-cite-global-bibliography (list (concat (funcall env 'docs) "/lib.bib")))
   (local-set-key (kbd "s-<return>") 'org-tree-to-indirect-buffer)  
   (setq org-preview-latex-process-alist
 	'((dvipng :programs

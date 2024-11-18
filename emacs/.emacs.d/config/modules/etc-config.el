@@ -1,30 +1,31 @@
 ;; -*- lexical-binding: t -*-
 ;; Miscellaneous configuration
 ;==============================================================================
-(use-package eww
-  :bind (("C-c w" . eww)
-         :map eww-mode-map
-         ("C-q" . quit-window)
-         ("C-l" . 'eww-lnum-follow))
-  :config
-  (setq browse-url-browser-function
-	(if (display-graphic-p)
-	    'browse-url-default-browser
+(defun et-init-etc (stem)
+  "Initialize miscellaneous tools"  
+  (use-package eww
+    :bind (("C-c w" . eww)
+           :map eww-mode-map
+           ("C-q" . quit-window)
+           ("C-l" . 'eww-lnum-follow))
+    :config
+    (setq browse-url-browser-function
+	  (if (display-graphic-p)
+	      'browse-url-default-browser
 	    'eww-browse-url)))
-
-(use-package bookmark
-  :bind (("M-s-s" . bookmark-set)
-         ("M-s-g" . bookmark-jump)
-         ("M-s-b" . bookmark-bmenu-list)))
-
-(use-package dabbrev
-  :bind (("M-m" . electric-newline-and-maybe-indent)
-         ("C-<tab>" . dabbrev-expand))
-  :config
-  (setq dabbrev-case-distinction nil
-        dabbrev-case-fold-search nil
-        dabbrev-case-replace nil
-        dabbrev-upcase-means-case-search t))
+  (use-package bookmark
+    :bind (("M-s-s" . bookmark-set)
+           ("M-s-g" . bookmark-jump)
+           ("M-s-b" . bookmark-bmenu-list)))
+  (use-package dabbrev
+    :bind (("M-m" . electric-newline-and-maybe-indent)
+           ("C-<tab>" . dabbrev-expand))
+    :config
+    (setq dabbrev-case-distinction nil
+          dabbrev-case-fold-search nil
+          dabbrev-case-replace nil
+          dabbrev-upcase-means-case-search t))
+  (et-init-ai-tools))
 
 ;; (use-package pdf-tools
 ;;   :config
@@ -32,14 +33,29 @@
 ;;     (pdf-tools-install)
 ;;     (setq pdf-view-midnight-colors '("#ffffff" . "#000000"))
 ;;     (add-hook 'pdf-view-mode-hook (lambda()
-;;                                     (pdf-view-midnight-minor-mode)))))
+;;                                     (pdf-view-midnight-minor-mode 1)))))
 
+;===============================================================================
+(defun et-init-ai-tools ()
+    (use-package gptel
+      :config
+      (progn
+	(setq gptel-model "mistralai/Mixtral-8x7B-Instruct-v0.1"
+              gptel-backend
+              (gptel-make-openai "HAL"
+		:host "api.together.xyz"
+		:key (getenv "TAI_KEY")
+		:stream t
+		:models '("mistralai/Mixtral-8x7B-Instruct-v0.1"
+			  "codellama/CodeLlama-13b-Instruct-hf"
+			  "codellama/CodeLlama-34b-Instruct-hf"))))))
+
+
 ;(use-package wolfram
 ;  :config
 ;  (setq wolfram-alpha-app-id "43X66J-3RL7UAKAQ3"))
 
 
-;===============================================================================
 ;; (define-prefix-command 'et/chatgpt-map)
 ;; (use-package chatgpt-shell
 ;;   :config
@@ -88,21 +104,6 @@
 ;;          (prmt (concat prel  "Calculate: " mathq)))
 ;;     (chatgpt-shell-send-to-buffer prmt)))
 
-(use-package gptel
-  :config
-  (progn
-    (setq gptel-model "mistralai/Mixtral-8x7B-Instruct-v0.1"
-          gptel-backend
-          (gptel-make-openai "HAL"
-                             :host "api.together.xyz"
-                             :key (getenv "TAI-KEY")
-                             :stream t
-                             :models '("mistralai/Mixtral-8x7B-Instruct-v0.1"
-                                       "codellama/CodeLlama-13b-Instruct-hf"
-                                       "codellama/CodeLlama-34b-Instruct-hf")))))
-
-
-
 
 ;==============================================================================
 ;; Remote
@@ -127,5 +128,4 @@
 ;    (comint-send-string proc "ora_eat/a37371242@stu\n")))
 
 ;==============================================================================
-(defun init-etc (stem) `"Not yet implemented")
 (provide 'etc-config)

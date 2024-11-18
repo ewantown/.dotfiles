@@ -1,14 +1,14 @@
 ;; -*- lexical-binding: t -*-
 ;; User Interface configuration
 ;==============================================================================
-(defun init-gui (config)
+(defun et-init-gui (config)
   "Set up Ewan's UI"
-  (facing config)
-  (fileio config)
-  (ergonomics)
-  (globals))
+  (et-init-facing config)
+  (et-init-fileio config)
+  (et-init-ergonomics)
+  (et-init-globals))
   
-(defun facing (config)  
+(defun et-init-facing (config)  
   "Initialize prettier Emacs"
   (interactive)
   (let ((themes (concat config "/themes")))
@@ -25,14 +25,15 @@
 	    (tool-bar-lines . 0)
 	    (internal-border-width . 0)
 	    (vertical-scroll-bars . nil)
-	    (horizontal-scroll-bars . nil)
-	    (font . "Menlo 13")))
+	    (horizontal-scroll-bars . nil)))
+    (with-system darwin
+      (add-to-list default-frame-alist (font . "Menlo 13")))
     (menu-bar-mode -1)
     (tool-bar-mode -1)
     (scroll-bar-mode -1)
     (set-scroll-bar-mode nil)))
 
-(defun fileio (conf)
+(defun et-init-fileio (conf)
   "Initialize buffer interaction with filesystem"
   (interactive)
   (put 'erase-buffer 'disabled nil)
@@ -55,7 +56,7 @@
 	  (setq undo-tree-history-directory-alist `((".*" . ,undos)))
 	  (global-undo-tree-mode))))))
 
-(defun ergonomics ()
+(defun et-init-ergonomics ()
   "Initialize general gui-interaction tools"
   (interactive)
   (use-package tab-bar
@@ -112,7 +113,7 @@
 	 ("C-x M-b" . list-buffers)
 	 ("C-x C-b" . helm-buffers-list))))
 
-(defun globals ()
+(defun et-init-globals ()
   "Initialize global keybindings."
   (interactive)
   (global-unset-key (kbd "C-;"))

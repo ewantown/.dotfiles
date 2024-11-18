@@ -43,20 +43,24 @@
 ;==============================================================================
 (require 'utils)
 
+;; Note: langs name functions defined and referenced in dev-config.el
 (with-system darwin
   (setq mac-option-modifier 'meta)
-  (add-to-list 'exec-path "/usr/local/bin"))
+  (add-to-list 'exec-path "/usr/local/bin")
+  (defconst LANGS '(l-chez l-sbcl l-javascript l-typescript)))
 
 (with-system windows-nt
   (setq w32-apps-modifier 'super)
   ;(add-to-list 'exec-path "C:/Program\ Files")
   ; So C-x C-c exits terminal emacs under git bash:
-  (global-set-key [24 pause] (quote save-buffers-kill-terminal)))
+  (global-set-key [24 pause] (quote save-buffers-kill-terminal))
+  (defconst LANGS '()))
 
 (with-system gnu/linux
   ; TODO - port general linux config
   (when (getenv "WSL_DISTRO_NAME")
-    (progn (require 'wsl-config) (init-wsl CONF STEM))))
+    (progn (require 'wsl-config) (et-init-wsl CONF STEM)))
+    (defconst LANGS '()))
 
 ;==============================================================================
 (require 'gui-config) ; user interface
@@ -67,21 +71,18 @@
 (require 'patches)
 (patch)
 
-;; Note: langs name functions defined and referenced in dev-config.el
-(defconst LANGS '(l-chez l-sbcl l-javascript l-typescript))
-
 ;; Main dispatch
 (if (display-graphic-p)
-    (progn (init-gui CONF)
-	   (init-org STEM)
-	   (init-dev STEM LANGS)
-	   ;(init-etc STEM)
+    (progn (et-init-gui CONF)
+	   (et-init-org STEM)
+	   (et-init-dev STEM LANGS)
+	   (et-init-etc STEM)
 	   )
-    (progn (fileio CONF)
-	   (globals)
-	   (ergonomics)
-	   (add-hook 'after-init-hook 'shell)
-	   ))
+  (progn (fileio CONF)
+	 (et-init-globals)
+	 (et-init-ergonomics)
+	 (add-hook 'after-init-hook 'shell)
+	 ))
 
 ;==============================================================================
 
@@ -89,13 +90,13 @@
 (when (equal 1 (random 10))
   (byte-recompile-directory (concat user-emacs-directory "elpa/") 0))
 
-(defun clock-startup ()
+(defun et-clock-startup ()
   (message "*** Emacs loaded in %s with %d garbage collections."
 	   (format "%.2f seconds"
 		   (float-time (time-subtract after-init-time
 					      before-init-time)))
 	   gcs-done))
 
-(add-hook 'emacs-startup-hook 'clock-startup)
+(add-hook 'emacs-startup-hook 'et-clock-startup)
 
 ;==============================================================================
