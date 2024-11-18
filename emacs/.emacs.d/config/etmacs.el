@@ -18,7 +18,10 @@
 
 (setq custom-file (concat CONF "custom.el"))
 
-(load-file (concat CONF ".env"))
+(let ((env (concat CONF ".env")))
+  (when (file-exists-p env)
+    (load-file env)))
+
 ;==============================================================================
 (require 'package)
 (setq package-enable-at-startup t)
