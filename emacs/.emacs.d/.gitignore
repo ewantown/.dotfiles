@@ -1,0 +1,7 @@
+*
+!.gitignore
+!init.el
+!*/
+!config/*.el
+!config/*/*.el
+!config/*/*.ttf
