@@ -52,7 +52,7 @@
 
 (with-system gnu/linux
   ; TODO - port general linux config
-  (when (getenv "WSLENV")
+  (when (getenv "WSL_DISTRO_NAME")
     (progn (require 'wsl-config) (init-wsl CONF STEM))))
 
 ;==============================================================================
