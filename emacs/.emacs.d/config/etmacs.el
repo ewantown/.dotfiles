@@ -39,28 +39,29 @@
 (require 'use-package)
 (require 'use-package-ensure)
 (setq use-package-always-ensure t)
-
 ;==============================================================================
 (require 'utils)
 
-;; Note: langs name functions defined and referenced in dev-config.el
+(defvar LANGS '() "Function symbols to be called by development configuration")
+
 (with-system darwin
   (setq mac-option-modifier 'meta)
   (add-to-list 'exec-path "/usr/local/bin")
-  (defconst LANGS '(l-chez l-sbcl l-javascript l-typescript)))
+  (setq LANGS '(l-chez l-sbcl l-javascript l-typescript)))
 
 (with-system windows-nt
   (setq w32-apps-modifier 'super)
   ;(add-to-list 'exec-path "C:/Program\ Files")
   ; So C-x C-c exits terminal emacs under git bash:
   (global-set-key [24 pause] (quote save-buffers-kill-terminal))
-  (defconst LANGS '()))
+  (setq LANGS '()))
 
 (with-system gnu/linux
   ; TODO - port general linux config
   (when (getenv "WSL_DISTRO_NAME")
-    (progn (require 'wsl-config) (et-init-wsl CONF STEM)))
-    (defconst LANGS '()))
+    ;(progn (require 'wsl-config) (et-init-wsl CONF STEM)))
+    (setq LANGS '(l-csharp l-yaml l-xml l-sql)))
+  )
 
 ;==============================================================================
 (require 'gui-config) ; user interface
@@ -75,10 +76,12 @@
 (if (display-graphic-p)
     (progn (et-init-gui CONF)
 	   (et-init-org STEM)
-	   (et-init-dev STEM LANGS)
 	   (et-init-etc STEM)
+	   (et-init-dev STEM LANGS)
 	   )
-  (progn (fileio CONF)
+  (progn (load-theme 'modus-vivendi)
+	 (et-init-frame)
+	 (et-init-fileio)
 	 (et-init-globals)
 	 (et-init-ergonomics)
 	 (add-hook 'after-init-hook 'shell)

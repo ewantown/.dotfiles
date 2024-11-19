@@ -3,5 +3,6 @@
 !init.el
 !*/
 !config/*.el
+config/custom.el
 !config/*/*.el
 !config/*/*.ttf

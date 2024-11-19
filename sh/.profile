@@ -27,6 +27,10 @@ if [ -d "/opt/homebrew/sbin" ] ; then
     export PATH="/opt/homebrew/sbin:$PATH"
 fi
 
+if [ -d "/snap/bin" ] ; then
+    export PATH="/snap/bin:$PATH"
+fi
+
 if [ -d "$HOME/.nvm" ] ; then
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # load nvm

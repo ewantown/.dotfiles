@@ -50,19 +50,21 @@
     (treesit-auto-install 'prompt)
     :config
     (treesit-auto-add-to-auto-mode-alist 'all))
+  (use-package restclient
+  :mode ("\\.http\\'" . restclient-mode))
   (use-package eglot
     :custom
     (eglot-autoshutdown t)
     (eglot-events-buffer-size 0)
     (eglot-extend-to-xref nil)
     (eglot-ignored-server-capabilities
-     '(;hoverProvider
+     '(					;hoverProvider
        documentHighlightProvider
        documentFormattingProvider
        documentRangeFormattingProvider
        documentOnTypeFormattingProvider
        colorProvider
-       ;foldingRangeProvider
+					;foldingRangeProvider
        )))
   (add-hook 'prog-mode-hook
 	    (lambda ()
@@ -198,5 +200,78 @@
 	  web-mode-enable-current-element-highlight t)))
 
 ;==============================================================================
+;; SQL
+(defun l-sql ()
+  (use-package sql
+    :config
+    (setq sql-db2-program "/mnt/d/SQLLIB/BIN/db2cmd.exe"
+	  sql-db2-options '("-c" "-i" "-w" "db2" "-tv"))
+    (defalias 'sql-get-login 'ignore) ; login with connection string
+    (advice-add 'sql-send-paragraph :before 'et-db-connect)))
 
+(defconst et-dbms-alist
+  '(("DB2" . sql-db2)))
+
+(defun et-sql-connection-string (dbms inst)
+  "Construct SQL connection string for INST using environment vars for DBMS"
+  (let ((user (getenv (concat (upcase dbms) "_USER")))
+	(pass (getenv (concat (upcase dbms) "_PASS"))))
+    (match (upcase dbms)
+	   ("DB2"
+	    (concat "connect to '" inst "' user '" user "' using '" pass "';"))
+	   ;; add more as needed
+	   (_ (error (format "No matching DBMS for %s" dbms))))))
+
+(defun et-db-connect ()
+  "Get DB connection details from user and connect if not already"
+  (interactive)
+  (unless (sql-buffer-live-p sql-buffer)
+    (let* ((dfdbms "DB2")
+	   (dbms
+	    (read-string
+	     (format "DBMS (default %s): " dfdbms) nil nil dfdbms nil))
+	   (inst (read-string "DB Instance: "))
+	   (buff (concat "*SQL: " (upcase dbms) " - " (upcase inst) "*")))
+      (let ((new (not (get-buffer buff)))
+	    (window (selected-window)))
+	(progn
+	  (funcall (cdr (assoc dbms et-dbms-alist)) buff)
+	  (if new
+	      (progn
+		(switch-to-buffer buff)
+		(toggle-truncate-lines 1)
+		(comint-clear-buffer)
+		(insert (et-sql-connection-string dbms inst))
+		(comint-send-input)))
+	  (select-window window))))))
+;==============================================================================
+;; C# / .NET
+(defun l-csharp ()
+  (use-package csharp-mode
+	:mode ("\\.cs\\'")
+	:init
+	(add-to-list 'eglot-server-programs '(csharp-mode . ("csharp-ls")))
+	(add-to-list 'eglot-server-programs '(csharp-ts-mode . ("csharp-ls")))
+	:hook ((csharp-mode csharp-ts-mode) . eglot-ensure)))
+
+;==============================================================================
+;; Markup langs
+(defun l-xml ()
+  (use-package nxml
+	:mode ("\\.xml\\'" "\\.uim\\'" "\\.vim\\'")
+	:hook  (nxml-mode . et-xml-format)))
+
+(defun et-xml-format ()
+  (interactive)
+  (setq
+   tab-width 4
+   nxml-child-indent 4
+   nxml-attribute-indent 4
+   nxml-slash-auto-complete-flag t))
+
+(defun l-yaml ()
+  (use-package yaml-mode
+	:mode ("\\.yml\\'" "\\.yaml\\'")))
+
+;==============================================================================
 (provide 'dev-config)

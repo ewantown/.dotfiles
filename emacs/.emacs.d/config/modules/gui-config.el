@@ -3,37 +3,39 @@
 ;==============================================================================
 (defun et-init-gui (config)
   "Set up Ewan's UI"
-  (et-init-facing config)
-  (et-init-fileio config)
-  (et-init-ergonomics)
-  (et-init-globals))
-  
+  (et-init-frame)  
+  (et-init-fileio)
+  (et-init-globals)
+  (et-init-ergonomics)  
+  (et-init-facing config))
+
+(defun et-init-frame ()
+  (setq inhibit-splash-screen t
+	frame-resize-pixelwise t
+	default-frame-alist
+	'((top . 0) (left . 0)
+	  (width . 83) (height . 50)
+	  (tool-bar-lines . 0)
+	  (internal-border-width . 0)
+	  (vertical-scroll-bars . nil)
+	  (horizontal-scroll-bars . nil)))
+    (menu-bar-mode -1)
+    (tool-bar-mode -1)
+    (scroll-bar-mode -1)
+    (set-scroll-bar-mode nil))
+
 (defun et-init-facing (config)  
   "Initialize prettier Emacs"
   (interactive)
   (let ((themes (concat config "/themes")))
     (add-to-list 'load-path themes)
     (add-to-list 'custom-theme-load-path themes)
-    (load-theme 'tomorrow-night-eighties t)
-    (set-face-foreground 'fill-column-indicator "grey30")
-    (setq inhibit-splash-screen t)
-    (setq frame-resize-pixelwise t)
-    (setq fill-column 80)
-    (setq default-frame-alist
-	  '((top . 0) (left . 0)
-	    (width . 83) (height . 50)
-	    (tool-bar-lines . 0)
-	    (internal-border-width . 0)
-	    (vertical-scroll-bars . nil)
-	    (horizontal-scroll-bars . nil)))
+    (load-theme 'tomorrow-night-eighties t)    
+    (set-face-foreground 'fill-column-indicator "grey30")    
     (with-system darwin
-      (add-to-list 'default-frame-alist '(font . "Menlo 13")))
-    (menu-bar-mode -1)
-    (tool-bar-mode -1)
-    (scroll-bar-mode -1)
-    (set-scroll-bar-mode nil)))
+      (add-to-list 'default-frame-alist '(font . "Menlo 13")))))
 
-(defun et-init-fileio (conf)
+(defun et-init-fileio ()
   "Initialize buffer interaction with filesystem"
   (interactive)
   (put 'erase-buffer 'disabled nil)
