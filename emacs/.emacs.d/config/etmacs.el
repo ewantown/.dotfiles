@@ -59,7 +59,7 @@
 (with-system gnu/linux
   ; TODO - port general linux config
   (when (getenv "WSL_DISTRO_NAME")
-    ;(progn (require 'wsl-config) (et-init-wsl CONF STEM)))
+    (progn (require 'wsl-config) (et-init-wsl CONF STEM))
     (setq LANGS '(l-csharp l-yaml l-xml l-sql)))
   )
 
