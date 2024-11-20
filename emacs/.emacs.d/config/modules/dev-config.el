@@ -154,6 +154,10 @@
   (use-package sly-quicklisp))
 
 (use-package paredit
+  :bind
+  (:map paredit-mode-map
+	("M-<right>" . paredit-forward-slurp-sexp)
+	("M-<left>" . paredit-forward-barf-sexp))
   :hook (lisp-mode emacs-lisp-mode scheme-mode sly-mode))
 
 ;===============================================================================

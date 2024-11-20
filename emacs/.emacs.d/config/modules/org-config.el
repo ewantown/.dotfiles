@@ -6,7 +6,7 @@
   (let ((top (concat stem (if (eq system-type 'darwin) "cloud/org/" "org/"))))
     (progn (setq org-directory top)
 	   (lambda (key)
-	     (let* ((map '((docs . "docs/") (time . "time/") (self . "self/")))
+	     (let* ((map '((top . "") (docs . "docs/") (time . "time/") (self . "self/")))
 		    (dir (cdr (assoc key map)))
 		    (path (concat top dir)))
 	       (cond ((and dir (file-exists-p path)) path)
@@ -14,21 +14,24 @@
 		     (t (error "No matching org directory"))))))))
 
 (defun et-init-org (stem)
-  (let ((org-env (et-make-org-env stem)))
-    (interactive)
+  (interactive)
+  (let ((org-env (et-make-org-env stem)))    
     (define-prefix-command 'et/org-map)
     (global-set-key (kbd "S-<return>") 'open-line)
     (global-set-key (kbd "C-o") 'et/org-map)
+    (use-package htmlize)
     (use-package org-superstar)
-    (use-package org      
+    (use-package org
       :config
       (et-init-org-time    org-env)
       (et-init-org-babel   org-env)
       (et-init-org-edit    org-env)
       (et-init-org-capture org-env)
       (setq org-startup-indented t)
-      (add-hook 'after-init-hook 'et-go-home)
+      (with-system darwin
+	(et-init-org-publish stem))      
       (global-set-key (kbd "M-s-h") 'et-go-home)
+      (add-hook 'after-init-hook 'et-go-home)
       (with-eval-after-load 'org-agenda
 	(progn
 	  (define-key org-agenda-mode-map (kbd "S-<left>") nil)
@@ -285,4 +288,61 @@
           citar-bibliography org-cite-global-bibliography)))
 
 ;==============================================================================
+(use-package org-html-themify
+  :ensure nil ; dropin
+  :hook (org-mode . org-html-themify-mode)
+  :config
+  (setq org-html-themify-themes
+	'((dark . tomorrow-night-eighties)
+          (light . modus-operandi))))
+
+(defun et-init-org-publish (&optional stem)
+  (interactive)
+  (require 'ox-publish)
+  (require 'ox-html)
+  (setq org-html-validation-link nil)
+  (setq org-publish-timestamp-directory
+	(concat user-emacs-directory ".org-timestamps/"))
+  (setq org-publish-use-timestamps-flag nil)  
+  (let ((stem (or stem STEM)))
+    (setq org-publish-project-alist
+	  `(
+	    ("etown.dev/files"
+	     :base-directory ,(concat stem "local/repos/etown.dev/org/")
+	     :base-extension "org"
+	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/")	   
+	     :publishing-function org-html-publish-to-html
+	     :recursive t
+	     :auto-sitemap t
+	     :sitemap-title "Sitemap"
+	     :headline-levels 3
+	     :section-numbers nil
+	     :with-toc nil
+	     :with-author nil
+	     :with-creator nil
+	     :with-date nil
+	     :with-email nil
+	     :time-stamp-file nil
+	     ;:html-head
+	     ;"<link rel=\"stylesheet\" href=\"./other/style.css\" type=\"text/css\"/>"
+	     ;:html-preamble t ; interferes with themify-generated style header
+	     )
+	    ("etown.dev/images"
+	     :base-directory ,(concat stem "local/repos/etown.dev/org/images/")
+	     :base-extension "jpg\\|gif\\|png"
+	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/images/")
+	     :publishing-function org-publish-attachment)
+	    ("etown.dev/other"
+	     :base-directory ,(concat stem "local/repos/etown.dev/org/other/")
+	     :base-extension "css\\|el"
+	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/other/")
+	     :publishing-function org-publish-attachment)
+	    ("etown.dev"
+	     :components ("etown.dev/files"
+			  "etown.dev/images"
+			  "etown.dev/other"))
+	    )
+	  )))
+;==============================================================================
+
 (provide 'org-config)
