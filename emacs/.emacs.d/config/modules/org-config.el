@@ -319,6 +319,8 @@
 	     :sitemap-title "Sitemap"
 	     :headline-levels 3
 	     :section-numbers nil
+	     :with-entities t
+	     :with-latex t	     
 	     :with-toc nil
 	     :with-author nil
 	     :with-creator nil
