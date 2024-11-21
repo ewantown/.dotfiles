@@ -27,9 +27,8 @@
       (et-init-org-babel   org-env)
       (et-init-org-edit    org-env)
       (et-init-org-capture org-env)
-      (setq org-startup-indented t)
-      (with-system darwin
-	(et-init-org-publish stem))      
+      (et-init-org-to-html stem)
+      (setq org-startup-indented t)      
       (global-set-key (kbd "M-s-h") 'et-go-home)
       (add-hook 'after-init-hook 'et-go-home)
       (with-eval-after-load 'org-agenda
@@ -288,30 +287,33 @@
           citar-bibliography org-cite-global-bibliography)))
 
 ;==============================================================================
-(use-package org-html-themify
-  :ensure nil ; dropin
-  :hook (org-mode . org-html-themify-mode)
-  :config
-  (setq org-html-themify-themes
-	'((dark . tomorrow-night-eighties)
-          (light . modus-operandi))))
-
-(defun et-init-org-publish (&optional stem)
+(defun et-init-org-to-html (&optional stem)
   (interactive)
-  (require 'ox-publish)
-  (require 'ox-html)
-  (setq org-html-validation-link nil)
-  (setq org-publish-timestamp-directory
-	(concat user-emacs-directory ".org-timestamps/"))
-  (setq org-publish-use-timestamps-flag nil)  
   (let ((stem (or stem STEM)))
-    (setq org-publish-project-alist
+    (use-package org-html-themify
+      :ensure nil ; dropin, on load path
+      :hook (org-mode . org-html-themify-mode)
+      :config
+      (setq org-html-themify-themes
+	    '((dark . tomorrow-night-eighties)
+              (light . modus-operandi))) ; TODO - nicer light theme
+      (setq org-html-validation-link nil)
+      (setq org-publish-timestamp-directory
+	    (concat user-emacs-directory ".org-timestamps/"))
+      (setq org-publish-use-timestamps-flag nil)  
+      (setq org-publish-project-alist
+	    (et-get-org-publish-project-alist stem)))))
+
+(defun et-get-org-publish-project-alist (stem)
+  (require 'org-html-themify)
+  (match system-type 
+	 ('darwin
 	  `(
 	    ("etown.dev/files"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/")
 	     :base-extension "org"
 	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/")	   
-	     :publishing-function org-html-publish-to-html
+	     :publishing-function et-org-html-publish-to-html ; extension
 	     :recursive t
 	     :auto-sitemap t
 	     :sitemap-title "Sitemap"
@@ -342,7 +344,9 @@
 			  "etown.dev/images"
 			  "etown.dev/other"))
 	    )
-	  )))
-;==============================================================================
+	  )
+	 ('gnu/linux  '())
+	 ('windows-nt '())))
 
+;==============================================================================
 (provide 'org-config)

@@ -1,11 +1,12 @@
 ;;; org-html-themify.el --- Themify org-mode export with Emacs color theme
 ;;; -*- lexical-binding: t -*-
 
-;; Author: Shi Tianshu
+;; Original Author: Shi Tianshu
+;; Modified By: Ewan Townshend
 ;; Keywords: org-mode
 ;; Package-Requires: ((emacs "27.1") (org "9.4.4") (htmlize "1.5.6") (dash "2.17.0") (hexrgb "0") (s "1.12.0"))
-;; Version: 1.0.0
-;; URL: https://www.github.com/DogLooksGood/org-html-themify
+;; Version: 2.0
+;; URL: TODO
 ;;
 ;; This file is not part of GNU Emacs.
 
@@ -42,8 +43,12 @@
 (require 'htmlize)
 (require 'dash)
 (require 'org)
-(require 'ox-html)
 (require 's)
+
+(require 'ox)
+(require 'ox-html)
+(require 'ox-publish)
+(use-package uuidgen)
 
 (defvar org-html-themify-themes
   '((dark . tango-dark)
@@ -114,7 +119,7 @@
 
 (defun org-html-themify--setup-inlines (exporter)
   "Insert custom inline css"
-  (when (eq exporter 'html)
+  (when (or (eq exporter 'html) (eq exporter 'et-html))
     (setq org-html-preamble
           (concat
            "<div id=\"toggle-theme\">&#9788;</div>"
@@ -186,5 +191,52 @@
       (org-html-themify--init)
     (org-html-themify--uninit)))
 
+;;; original org-html-themify ends here.
+
+;; This enables a copy-to-clipboard button org source blocks
+;; https://emacs.stackexchange.com/questions/31260/what-would-be-the-simplest-way-to-add-a-copy-to-clipboard-button-to-html-expor
+(defun et-html-src-block (src-block contents info)
+  "Transcode a SRC-BLOCK element from Org to HTML, adding a 'copy to clipboard' button."
+  (if (not (org-export-read-attribute :attr_html src-block :copy-button))
+      (org-export-with-backend 'html src-block contents info)
+    (let*((b-id (concat "btn_" (s-replace "-" "" (uuidgen-4))))
+          (content (let ((print-escape-newlines t))
+		     (prin1-to-string (org-export-format-code-default src-block info))))
+          (content- (s-chop-prefix "\"" (s-chop-suffix "\"" (s-replace "`" "\\`" content))))
+          (btn- "button")
+          (scr- "script")
+          (bquote- "`")
+          (script
+	   (concat "\n<" scr- " type='text/javascript'>\n var copyBtn"
+		   b-id "=document.querySelector('" btn- "[name=" b-id "]');\n"
+                   "copyBtn" b-id ".addEventListener('click', function(event) {\n"
+                   "copyTextToClipboard(" bquote- content- bquote- ");\n});\n</" scr- ">\n"))
+          (button
+	   (concat "<" btn- " class='copyBtn' name=" b-id ">copy</" btn- ">")))
+      (concat "<div class='org-src-wrapper'>\n "
+	      (org-export-with-backend 'html src-block contents info)
+	      button script
+	      "</div>"))))
+
+(org-export-define-derived-backend 'et-html 'html
+  :translate-alist '((src-block . et-html-src-block)))
+
+;; extends ox-html function org-html-publish-to-html to new backend
+(defun et-org-html-publish-to-html (plist filename pub-dir)
+  "Publish an org file to HTML, adding 'copy' buttons to source blocks.
+
+FILENAME is the filename of the Org file to be published.  PLIST
+is the property list for the given project.  PUB-DIR is the
+publishing directory.
+
+Return output file name."
+  (org-publish-org-to 'et-html filename
+		      (concat (when (> (length org-html-extension) 0) ".")
+			      (or (plist-get plist :html-extension)
+				  org-html-extension
+				  "html"))
+		      plist pub-dir))
+
+
 (provide 'org-html-themify)
-;;; org-html-themify ends here.
+
