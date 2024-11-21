@@ -35,12 +35,15 @@
     :config
     (require 'smartparens-config))
   (use-package company
+    :bind
+    ("TAB" . company-indent-or-complete-common)
+    (:map company-active-map
+	  ("TAB" . company-complete-common))
     :config
     (setq company-frontends
 	  '(company-pseudo-tooltip-unless-just-one-frontend
 	    company-preview-frontend
-	    company-echo-metadata-frontend))
-    (define-key company-active-map (kbd "<tab>") 'company-complete-common))
+	    company-echo-metadata-frontend)))
   (use-package flycheck
     :config
     (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc)))
@@ -124,41 +127,46 @@
 	   (lambda () (interactive)
 	     (progn (insert "(lambda ())") (backward-char 2)))))))
 
-(defun l-sbcl ()
-  "Initialize SBCL (Common Lisp) dev env (Sly)"
+(defun l-sbcl ()  
+  "Initialize SBCL (Common Lisp) dev env (Sly)"  
   (message "Initializing Common Lisp mode")
-  (use-package sly
-    :bind
-    (:map sly-mode-map
-	  ("C-c C-f" . 
-	   (lambda ()
-	     "Compile and print to mrepl"
-	     (interactive)
-	     (let* ((form (sly-sexp-at-point))
-		    (form-with-print (format "(print %s)" form))
-		    (sly-command (sly-interactive-eval form-with-print)))
-	       (sly-compile-defun)
-	       (message "Compiled: %s" form-with-print)))))
-    :config
-    ;(setq inferior-lisp-program "sbcl")
-    (setq sly-lisp-implementations '((sbcl ("sbcl") :coding-system utf-8))
-	  sly-default-lisp 'sbcl
-	  sly-command-switch-to-existing-lisp 'always
-	  sly-auto-select-connection 'always)
-    (add-hook 'emacs-lisp-mode-hook (lambda () (sly-mode -1)))
-    (add-hook 'mrepl-mode-hook 'company-mode)
-    (sly-symbol-completion-mode -1)
-    (add-hook 'sly-mode-hook 'company-mode)
-    (et-schemify-mode-map lisp-mode-map)
-    (et-schemify-mode-map sly-mode-map))
-  (use-package sly-quicklisp))
+  (message "Sly is unusable - takes over completion-at-point")
+;;   (use-package sly
+;;     :bind
+;;     (:map sly-mode-map
+;; 	  ("C-c C-f" . 
+;; 	   (lambda ()
+;; 	     "Compile and print to mrepl"
+;; 	     (interactive)
+;; 	     (let* ((form (sly-sexp-at-point))
+;; 		    (form-with-print (format "(print %s)" form))
+;; 		    (sly-command (sly-interactive-eval form-with-print)))
+;; 	       (sly-compile-defun)
+;; 	       (message "Compiled: %s" form-with-print)))))
+;;     :config
+;; 					;(setq inferior-lisp-program "sbcl")
+;;     (setq sly-lisp-implementations '((sbcl ("sbcl") :coding-system utf-8))
+;; 	  sly-default-lisp 'sbcl
+;; 	  sly-command-switch-to-existing-lisp 'always
+;; 	  sly-auto-select-connection 'always)    
+;;     (add-hook 'mrepl-mode-hook 'company-mode)    
+;;     (et-schemify-mode-map lisp-mode-map)
+;;     (et-schemify-mode-map sly-mode-map)
+;;     (sly-symbol-completion-mode -1)    
+;;     (add-hook 'emacs-lisp-mode-hook (lambda () (sly-mode -1)))        
+;;     (add-hook 'sly-mode-hook 'company-mode)
+;;     (setq completion-at-point-functions ; super annoying bug
+;; 	  '(company-complete-common)))
+;;   (use-package sly-quicklisp))
 
-(use-package paredit
-  :bind
-  (:map paredit-mode-map
-	("M-<right>" . paredit-forward-slurp-sexp)
-	("M-<left>" . paredit-forward-barf-sexp))
-  :hook (lisp-mode emacs-lisp-mode scheme-mode sly-mode))
+;; (use-package paredit
+;;   :bind
+;;   (:map paredit-mode-map
+;; 	("M-<right>" . paredit-forward-slurp-sexp)
+;; 	("M-<left>" . paredit-forward-barf-sexp))
+;;   :hook (lisp-mode emacs-lisp-mode scheme-mode sly-mode)
+  )
+
 
 ;===============================================================================
 ;; JS/TS

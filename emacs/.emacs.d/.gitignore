@@ -3,8 +3,8 @@
 !init.el
 !*/
 !config/*.el
+!config/**/*.el
+!config/**/*.js
+!config/**/*.css
+!config/**/*.ttf
 config/custom.el
-!config/*/*.el
-!config/*/*.js
-!config/*/*.css
-!config/*/*.ttf

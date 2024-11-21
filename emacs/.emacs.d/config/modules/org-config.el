@@ -27,7 +27,7 @@
       (et-init-org-babel   org-env)
       (et-init-org-edit    org-env)
       (et-init-org-capture org-env)
-      (et-init-org-to-html stem)
+      (et-init-org-html-publish stem)
       (setq org-startup-indented t)      
       (global-set-key (kbd "M-s-h") 'et-go-home)
       (add-hook 'after-init-hook 'et-go-home)
@@ -286,26 +286,25 @@
 	  ;(setq org-cite-export-processors '((latex . biblatex)))
           citar-bibliography org-cite-global-bibliography)))
 
-;==============================================================================
-(defun et-init-org-to-html (&optional stem)
+;===============================================================================
+(defun et-init-org-html-publish (&optional stem)
   (interactive)
   (let ((stem (or stem STEM)))
-    (use-package org-html-themify
-      :ensure nil ; dropin, on load path
-      :hook (org-mode . org-html-themify-mode)
+    (use-package et-org-html
+      :ensure nil ; dropin
+      :hook (org-mode . et-org-html-mode)
       :config
-      (setq org-html-themify-themes
+      (setq et-org-html-theme-alist
 	    '((dark . tomorrow-night-eighties)
-              (light . modus-operandi))) ; TODO - nicer light theme
+              (light . modus-operandi)))
       (setq org-html-validation-link nil)
       (setq org-publish-timestamp-directory
 	    (concat user-emacs-directory ".org-timestamps/"))
-      (setq org-publish-use-timestamps-flag nil)  
+      (setq org-publish-use-timestamps-flag nil)
       (setq org-publish-project-alist
 	    (et-get-org-publish-project-alist stem)))))
 
 (defun et-get-org-publish-project-alist (stem)
-  (require 'org-html-themify)
   (match system-type 
 	 ('darwin
 	  `(
@@ -327,9 +326,9 @@
 	     :with-date nil
 	     :with-email nil
 	     :time-stamp-file nil
-	     ;:html-head
-	     ;"<link rel=\"stylesheet\" href=\"./other/style.css\" type=\"text/css\"/>"
-	     ;:html-preamble t ; interferes with themify-generated style header
+	     ;;:html-head
+	     ;;"<link rel=\"stylesheet\" href=\"./other/style.css\" type=\"text/css\"/>"
+	     ;;:html-preamble t ; interferes with themify-generated style header
 	     )
 	    ("etown.dev/images"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/images/")

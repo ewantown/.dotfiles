@@ -13,8 +13,9 @@
 (defconst MODULES (concat CONF "modules/"))
 (defconst DROPINS (concat CONF "dropins/"))
 
-(mapc (lambda (dir) (add-to-list 'load-path dir))
-      (list CONF MODULES DROPINS))
+(mapc (lambda (dir) (add-to-list 'load-path dir)) 
+      (delete-dups (mapcar (lambda (x) (file-name-directory x))
+			   (directory-files-recursively CONF "**"))))
 
 (setq custom-file (concat CONF "custom.el"))
 
