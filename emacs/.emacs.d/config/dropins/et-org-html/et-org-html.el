@@ -63,9 +63,9 @@
     (setq org-html-head-include-default-style nil)  
     (add-hook 'org-export-before-processing-hook 'et-org-html-inject)
     (setq et-org-html-initial-face-overrides htmlize-face-overrides
-	  et-org-html-initial-head-extra     org-html-head-extra
-	  et-org-html-preamble               org-html-preamble
-	  et-org-html-postamble              org-html-postamble)
+	  et-org-html-initial-head-extra org-html-head-extra
+	  et-org-html-initial-preamble   'org-html-preamble
+	  et-org-html-initial-postamble  'org-html-postamble)
     (setq htmlize-face-overrides
 	  (append
 	   et-org-html-initial-face-overrides
@@ -99,7 +99,7 @@
              font-lock-string-face
 	     (:foreground "var(--clr-string)"
 			  :background "var(--bg-string)"))))))
-
+(et-org-html-setup)
 (defun et-org-html-teardown ()
   (when et-org-html-is-active
     (setq et-org-html-is-active nil)
@@ -116,12 +116,12 @@
 (defun et-org-html-inject (export-backend)
   "Inject page-level styling and scripts in header, preamble and postamble"
   (when (or (eq export-backend 'html) (eq export-backend 'et-html))
-    (let ((style     (et-org-html-style))
-	  (preamble  (et-org-html-preamble))
+    (let ((style (et-org-html-style))
+	  (preamble (et-org-html-preamble))
 	  (postamble (et-org-html-postamble)))
       (setq org-html-head-extra (concat style et-org-html-initial-head-extra))
-      (setq org-html-preamble    preamble)
-      (setq org-html-postamble   postamble))))
+      (setq org-html-preamble   preamble)
+      (setq org-html-postamble  postamble))))
 
 (defun et-org-html-style ()
   "Constructs html <style> element for header"
@@ -130,10 +130,10 @@
    "<!--/*--><![CDATA[/*><!--*/\n"
    (with-temp-buffer
      (insert-file-contents et-org-html-css-path)
-     (et-org-html-interpolate-css)
-     (when (and (not (equal ""  et-org-html-extra-css-path))
+     (when (and (not (equal "" et-org-html-extra-css-path))
 		(file-exists-p et-org-html-extra-css-path))
-       (insert-file-contents et-org-html-extra-css-path))
+       (insert-file-contents et-org-html-extra-css-path))     
+     (et-org-html-interpolate-css)
      (buffer-string))
    "/*]]>*/-->\n"
    "</style>\n"))
@@ -141,15 +141,18 @@
 (defun et-org-html-preamble ()
   "Constructs html preamble to main content area"
   (concat
-   "<div id='toggle-theme'>&#9788;</div>"
-   "<div id='toggle-toc'>&#9776;</div>"
    (with-temp-buffer
      (when (and (not (equal "" et-org-html-header-path))
 		(file-exists-p et-org-html-header-path))
-       (insert "<div id='injected-header'>")
-       (insert-file-contents et-org-html-header-path)
+       (insert "<div id='injected-head' class='injected'>")
+       (insert (with-temp-buffer (insert-file-contents et-org-html-header-path)
+				 (buffer-string)))
        (insert "</div>"))
-     (buffer-string))))
+     (buffer-string))
+   "<div id='view-controls'>"
+   "<div id='toggle-theme'>&#9788;</div>"
+   "<div id='toggle-toc'>&#9776;</div>"
+   "</div>"))
 
 (defun et-org-html-postamble ()
   "Constructs html postamble to main content area"
@@ -157,8 +160,9 @@
    (with-temp-buffer
      (when (and (not (equal "" et-org-html-footer-path))
 		(file-exists-p et-org-html-footer-path))
-       (insert "<div id='injected-footer'>")
-       (insert-file-contents et-org-html-footer-path)
+       (insert "<div id='injected-foot' class='injected'>")
+       (insert (with-temp-buffer (insert-file-contents et-org-html-footer-path)
+				 (buffer-string)))
        (insert "</div>"))
      (buffer-string))
    "<script type=\"text/javascript\">\n"
@@ -256,7 +260,7 @@
 (org-export-define-derived-backend 'et-html 'html
   :translate-alist '((src-block . et-org-html-src-block)))
 
-(defun et-org-export-to-html (file)
+(defun et-org-html-export-to-html (file)
   "Exports the current org-mode buffer to customized HTML file"
   (interactive "FFile Name: ")
   (org-export-to-file 'et-html file))

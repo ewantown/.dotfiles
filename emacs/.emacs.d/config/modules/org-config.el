@@ -302,7 +302,12 @@
 	    (concat user-emacs-directory ".org-timestamps/"))
       (setq org-publish-use-timestamps-flag nil)
       (setq org-publish-project-alist
-	    (et-get-org-publish-project-alist stem)))))
+	    (et-get-org-publish-project-alist stem))
+      ;; Personal website customization
+      (setq et-org-html-header-path 
+	    "~/-/local/repos/etown.dev/org/header.html")
+      (setq et-org-html-extra-css-path
+	    "~/-/local/repos/etown.dev/org/header.css"))))
 
 (defun et-get-org-publish-project-alist (stem)
   (match system-type 
@@ -313,6 +318,7 @@
 	     :base-extension "org"
 	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/")	   
 	     :publishing-function et-org-html-publish-to-html ; extension
+	     :htmlized-source t
 	     :recursive t
 	     :auto-sitemap t
 	     :sitemap-title "Sitemap"
@@ -328,7 +334,6 @@
 	     :time-stamp-file nil
 	     ;;:html-head
 	     ;;"<link rel=\"stylesheet\" href=\"./other/style.css\" type=\"text/css\"/>"
-	     ;;:html-preamble t ; interferes with themify-generated style header
 	     )
 	    ("etown.dev/images"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/images/")
