@@ -85,7 +85,6 @@
 	 (et-init-ergonomics)
 	 (add-hook 'after-init-hook 'shell)
 	 ))
-
 ;==============================================================================
 
 (setq byte-compile-warnings '()) ; errors only
