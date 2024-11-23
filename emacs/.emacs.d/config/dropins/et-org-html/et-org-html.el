@@ -150,7 +150,7 @@
        (insert "</div>"))
      (buffer-string))
    "<div id='view-controls'>"
-   "<div id='toggle-theme'>&#9788;</div>"
+   "<div id='toggle-mode'>&#9788;</div>"
    "<div id='toggle-toc'>&#9776;</div>"
    "</div>"))
 
@@ -204,7 +204,7 @@
   "Parse/Interp string form #{mode:entity:attribute:key?|...} against themes"
   (let* ((clauses (split-string (substring str 2 -1) "|"))
 	 (val (car (-keep 'et-org-html-interp-clause clauses))))
-    (cond ((null val) "initial")
+    (cond ((null val) "initial") ;; TODO - function for best guess at null vals
 	  ((hexrgb-rgb-hex-string-p val) val)
 	  ((hexrgb-color-name-to-hex val 2)))))
 
@@ -242,7 +242,7 @@
 	    (s-chop-prefix "\""
 			   (s-chop-suffix "\""
 					  (s-replace "`" "\\`" content)))))
-      (concat "<div class='org-src-wrapper'>\n"
+      (concat "<div class='org-src-wrapper'>\n"	      
 	      (org-export-with-backend 'html src-block contents info)
 	      (et-org-html-copy-src-button btn-id)
 	      (et-org-html-copy-src-script btn-id content^)

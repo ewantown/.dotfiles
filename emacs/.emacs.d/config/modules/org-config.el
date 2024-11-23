@@ -2,7 +2,7 @@
 ;; Org Mode configuration
 (require 'utils)
 ;==============================================================================
-(defun et-make-org-env (stem)  
+(defun et-make-org-env (stem)
   (let ((top (concat stem (if (eq system-type 'darwin) "cloud/org/" "org/"))))
     (progn (setq org-directory top)
 	   (lambda (key)
@@ -15,7 +15,7 @@
 
 (defun et-init-org (stem)
   (interactive)
-  (let ((org-env (et-make-org-env stem)))    
+  (let ((org-env (et-make-org-env stem)))
     (define-prefix-command 'et/org-map)
     (global-set-key (kbd "S-<return>") 'open-line)
     (global-set-key (kbd "C-o") 'et/org-map)
@@ -28,7 +28,7 @@
       (et-init-org-edit    org-env)
       (et-init-org-capture org-env)
       (et-init-org-html-publish stem)
-      (setq org-startup-indented t)      
+      (setq org-startup-indented t)
       (global-set-key (kbd "M-s-h") 'et-go-home)
       (add-hook 'after-init-hook 'et-go-home)
       (with-eval-after-load 'org-agenda
@@ -42,21 +42,21 @@
 			  (org-superstar-mode)))
       :bind
       (:map et/org-map
-            ("M-<return>" . org-babel-execute-src-block)
-            ("t" . org-insert-structure-template)
-            ("<return>" . gptel-send)
-            ("s" . org-store-link)
-            ("i" . org-insert-link)
-            ("c" . org-capture)
-            ("a" . org-agenda)
-            ("A" . et/go-home)
-            ("r" . org-cite-insert)
-            ("C-F" . org-footnote-new)
-            ("f" . org-footnote-action)
-            ("C-a" . et/chatgpt-map)
-            ("s" . org-store-link)
-            ("C-n" . org-next-visible-heading)
-            ("C-p" . org-previous-visible-heading)))))
+	    ("M-<return>" . org-babel-execute-src-block)
+	    ("t" . org-insert-structure-template)
+	    ("<return>" . gptel-send)
+	    ("s" . org-store-link)
+	    ("i" . org-insert-link)
+	    ("c" . org-capture)
+	    ("a" . org-agenda)
+	    ("A" . et/go-home)
+	    ("r" . org-cite-insert)
+	    ("C-F" . org-footnote-new)
+	    ("f" . org-footnote-action)
+	    ("C-a" . et/chatgpt-map)
+	    ("s" . org-store-link)
+	    ("C-n" . org-next-visible-heading)
+	    ("C-p" . org-previous-visible-heading)))))
 
 (defun et-init-org-time (env)
   (progn
@@ -68,63 +68,63 @@
 	(unless (file-exists-p diary-file)
 	  (write-region "" nil diary-file)))))
     (setq calendar-date-style 'iso
-          diary-show-holidays-flag nil
-          calendar-mark-diary-entries-flag t
-          holiday-islamic-holidays nil
-          holiday-hebrew-holidays nil
-          holiday-bahai-holidays nil
-          holiday-christian-holidays nil
-          holiday-oriental-holidays nil
-          holiday-other-holidays nil)
+	  diary-show-holidays-flag nil
+	  calendar-mark-diary-entries-flag t
+	  holiday-islamic-holidays nil
+	  holiday-hebrew-holidays nil
+	  holiday-bahai-holidays nil
+	  holiday-christian-holidays nil
+	  holiday-oriental-holidays nil
+	  holiday-other-holidays nil)
     (setq org-todo-keywords
-          '((sequence "TODO" "DOIN" "|" "DONE")
+	  '((sequence "TODO" "DOIN" "|" "DONE")
 	    (sequence "{ }" "{~}" "|" "{*}")
 	    (sequence "{-}" "|" "{+}")
 	    (sequence "{?}" "|" "{*}")))
     (setq org-todo-keyword-faces
-          '(("TODO" . (:foreground "#f67c8b" :weight bold))
-            ("DOIN" . (:foreground "#fb91fb" :weight bold))
-            ("DONE" . (:foreground "#9cfdcd" :weight bold))
-            ("{ }" . (:foreground "#f67c8b" :weight bold))
-            ("{-}" . (:foreground "#f67c8b" :weight bold))
-            ("{~}" . (:foreground "#fb91fb" :weight bold))
-            ("{?}" . (:foreground "#ff7f00" :weight bold))
-            ("{*}" . (:foreground "#9cfdcd" :weight bold))))
+	  '(("TODO" . (:foreground "#f67c8b" :weight bold))
+	    ("DOIN" . (:foreground "#fb91fb" :weight bold))
+	    ("DONE" . (:foreground "#9cfdcd" :weight bold))
+	    ("{ }" . (:foreground "#f67c8b" :weight bold))
+	    ("{-}" . (:foreground "#f67c8b" :weight bold))
+	    ("{~}" . (:foreground "#fb91fb" :weight bold))
+	    ("{?}" . (:foreground "#ff7f00" :weight bold))
+	    ("{*}" . (:foreground "#9cfdcd" :weight bold))))
     (setq org-agenda-include-diary t)
     (setq org-agenda-files
-          (append (file-expand-wildcards (concat (funcall env 'docs) "*.org"))
-                  (file-expand-wildcards (concat (funcall env 'time) "*.org"))))
+	  (append (file-expand-wildcards (concat (funcall env 'docs) "*.org"))
+		  (file-expand-wildcards (concat (funcall env 'time) "*.org"))))
     (setq org-agenda-prefix-format
 	  '((agenda . " %?-12t% s ")
-            (todo . " %i ");%?-12:c")
-            (tags . " %i %-12:c")
-            (search . " %i %-12:c")))
+	    (todo . " %i ");%?-12:c")
+	    (tags . " %i %-12:c")
+	    (search . " %i %-12:c")))
     (setq org-agenda-custom-commands
-        '(("n" "Now" ; "homepage"
+	'(("n" "Now" ; "homepage"
 	       ((agenda "" ((org-agenda-span 1)
-		                (org-agenda-overriding-header "TODAY:")
-		                (org-agenda-skip-function
-		                 '(org-agenda-skip-entry-if
-			               'todo
-		      	           '("TODO" "DOIN" "{ }" "{~}")))
-		                (org-deadline-warning-days 1)
-		                (org-deadline-past-days 1)))
-	        (todo "TODO|DOIN|{ }|{~}|{?}"
-                  ((org-agenda-overriding-header "TASKS:")
-                   (org-agenda-skip-function
-                    '(org-agenda-skip-entry-if 'regexp ":routine:"))))
-	        (agenda "" ((org-agenda-overriding-header "SOON:\n")
-		                (org-agenda-start-day "+1d")
-		                (org-agenda-span 10)
-		                (tags "+CATEGORY=\"Event\"" "-CATEGORY=\"Cyclic\"")
-		                (org-agenda-skip-function
-		                 '(org-agenda-skip-entry-if
-			               'todo
-			               '("TODO" "DOIN" "DONE" "{-}" "{ }")
-                           'regexp ":routine:"))))))))
+				(org-agenda-overriding-header "TODAY:")
+				(org-agenda-skip-function
+				 '(org-agenda-skip-entry-if
+				       'todo
+				   '("TODO" "DOIN" "{ }" "{~}")))
+				(org-deadline-warning-days 1)
+				(org-deadline-past-days 1)))
+		(todo "TODO|DOIN|{ }|{~}|{?}"
+		  ((org-agenda-overriding-header "TASKS:")
+		   (org-agenda-skip-function
+		    '(org-agenda-skip-entry-if 'regexp ":routine:"))))
+		(agenda "" ((org-agenda-overriding-header "SOON:\n")
+				(org-agenda-start-day "+1d")
+				(org-agenda-span 10)
+				(tags "+CATEGORY=\"Event\"" "-CATEGORY=\"Cyclic\"")
+				(org-agenda-skip-function
+				 '(org-agenda-skip-entry-if
+				       'todo
+				       '("TODO" "DOIN" "DONE" "{-}" "{ }")
+			   'regexp ":routine:"))))))))
     ;; (use-package pomidor
     ;;   :bind ((:map et/org-map
-    ;; 		   ("c" . pomidor)))
+    ;;		   ("c" . pomidor)))
     ;;   :config (setq pomidor-sound-tick t
     ;;                 pomidor-sound-tack t)
     ;;   :hook (pomidor-mode . (lambda ()
@@ -143,31 +143,31 @@
   (setq org-capture-templates
       '(("n" "Note" entry
 	 (file+datetree (concat (funcall env 'docs) "notes.org"))
-         "* %U\n %?\ncf.: %a"
+	 "* %U\n %?\ncf.: %a"
 	 :empty-lines 1)
 	("e" "Event" entry
 	 (file+headline (concat (funcall env 'time) "events.org") "Calendar")
-         "* %^T %^{Event}"
+	 "* %^T %^{Event}"
 	 :empty-lines 1)
 	("m" "Meeting" entry
 	 (file+headline (concat (funcall env 'time) "events.org") "Meetings")
-         "** %^T Meet with %^{With} about %^{About}\n*** Notes:\n%?"
+	 "** %^T Meet with %^{With} about %^{About}\n*** Notes:\n%?"
 	 :empty-lines 1)
 	("t" "Task" entry
 	 (file+headline (concat (funcall env 'time) "tasks.org") "Tasks")
-         "* { } [#%^{Priority}] %?%i"
+	 "* { } [#%^{Priority}] %?%i"
 	 :empty-lines 1)
 	("p" "Project" entry
 	 (file (concat (funcall env 'docs) "make.org"))
-         "* %^{Headline}\nDEADLINE: %^t\n** Summary:\n%?\n** Notes\n"
+	 "* %^{Headline}\nDEADLINE: %^t\n** Summary:\n%?\n** Notes\n"
 	 :empty-lines 1)
 	("l" "Log" entry
 	 (file+datetree+prompt (concat (funcall env 'time) "log.org"))
-         "* %T%i"
+	 "* %T%i"
 	 :empty-lines 1)
 	("w" "Weigh-in" entry
 	 (file+headline (concat (funcall env 'self) "diet.org") "Logs")
-         "** { } %t
+	 "** { } %t
 %^{Weight}p
 |-------+------+-------+--------+--------+--------+--------+------+------+-------+------|
 | Time  | Food | Quant | cals/u | fats/u | carb/u | prot/u | Cals | Fats | Carbs | Prot |
@@ -199,7 +199,7 @@
   ;;; Babel
   ;(add-to-list 'load-path "~/.emacs.d/config/packages/ob-racket.el")
   (setq org-confirm-babel-evaluate nil)
-  (setq org-babel-clojure-backend 'cider)  
+  (setq org-babel-clojure-backend 'cider)
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((C . t)
@@ -216,12 +216,12 @@
   (setq org-adapt-indentation 'headline-data)
   ;(auto-fill-mode)
   (prettify-symbols-mode)
-  (setq org-pretty-entities nil)                                
+  (setq org-pretty-entities nil)
   (setq org-return-follows-link  t)
   (setq org-cycle-separator-lines 1)
   (setq org-footnote-auto-adjust 't)
   (setq org-cite-global-bibliography (list (concat (funcall env 'docs) "/lib.bib")))
-  (local-set-key (kbd "s-<return>") 'org-tree-to-indirect-buffer)  
+  (local-set-key (kbd "s-<return>") 'org-tree-to-indirect-buffer)
   (setq org-preview-latex-process-alist
 	'((dvipng :programs
 		 ("latex" "dvipng")
@@ -229,7 +229,7 @@
 		 :message "you need to install the programs: latex and dvipng."
 		 :image-input-type "dvi"
 		 :image-output-type "png"
-		 :image-size-adjust (1.0 . 1.0)		 
+		 :image-size-adjust (1.0 . 1.0)
 		 :latex-compiler
 		 ("latex -interaction nonstopmode -output-directory %o %f")
 		 :image-converter
@@ -242,7 +242,7 @@
 		  :message "you need to install the programs: latex and dvisvgm."
 		  :image-input-type "dvi"
 		  :image-output-type "svg"
-		  :image-size-adjust (1.7 . 1.5)		  
+		  :image-size-adjust (1.7 . 1.5)
 		  :latex-compiler
 		  ("latex -interaction nonstopmode -output-directory %o %f")
 		  :image-converter
@@ -253,7 +253,7 @@
 		      :message "you need to install the programs: latex and imagemagick."
 		      :image-input-type "pdf"
 		      :image-output-type "png"
-		      :image-size-adjust (1.0 . 1.0)		      
+		      :image-size-adjust (1.0 . 1.0)
 		      :latex-compiler
 		      ("pdflatex -interaction nonstopmode -output-directory %o %f")
 		      :image-converter
@@ -280,11 +280,11 @@
   (use-package citar
     :config
     (setq org-cite-insert-processor 'citar
-          org-cite-follow-processor 'citar
-          org-cite-activate-processor 'citar
+	  org-cite-follow-processor 'citar
+	  org-cite-activate-processor 'citar
 	  ;(setq org-cite-insert-processors '((latex . oc-bibtex)))
 	  ;(setq org-cite-export-processors '((latex . biblatex)))
-          citar-bibliography org-cite-global-bibliography)))
+	  citar-bibliography org-cite-global-bibliography)))
 
 ;===============================================================================
 (defun et-init-org-html-publish (&optional stem)
@@ -296,7 +296,8 @@
       :config
       (setq et-org-html-theme-alist
 	    '((dark . tomorrow-night-eighties)
-              (light . modus-operandi)))
+	      ;;(dark . zenburn)
+	      (light . solo-jazz)))
       (setq org-html-validation-link nil)
       (setq org-publish-timestamp-directory
 	    (concat user-emacs-directory ".org-timestamps/"))
@@ -304,19 +305,19 @@
       (setq org-publish-project-alist
 	    (et-get-org-publish-project-alist stem))
       ;; Personal website customization
-      (setq et-org-html-header-path 
+      (setq et-org-html-header-path
 	    "~/-/local/repos/etown.dev/org/header.html")
       (setq et-org-html-extra-css-path
 	    "~/-/local/repos/etown.dev/org/header.css"))))
-org-export-with-toc
+
 (defun et-get-org-publish-project-alist (stem)
-  (match system-type 
+  (match system-type
 	 ('darwin
 	  `(
 	    ("etown.dev/files"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/")
 	     :base-extension "org"
-	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/")	   
+	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/")
 	     :publishing-function et-org-html-publish-to-html ; extension
 	     :htmlized-source t
 	     :recursive t
@@ -325,15 +326,13 @@ org-export-with-toc
 	     :headline-levels 1
 	     :section-numbers nil
 	     :with-entities t
-	     :with-latex t	     
+	     :with-latex t
 	     :with-toc t
 	     :with-author nil
 	     :with-creator nil
 	     :with-date nil
 	     :with-email nil
 	     :time-stamp-file nil
-	     ;;:html-head
-	     ;;"<link rel=\"stylesheet\" href=\"./other/style.css\" type=\"text/css\"/>"
 	     )
 	    ("etown.dev/images"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/images/")

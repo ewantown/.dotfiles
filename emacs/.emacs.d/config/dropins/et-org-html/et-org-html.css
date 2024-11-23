@@ -8,11 +8,11 @@
 html {
     font-family: Sans;
     line-height: 1;
-    /*-webkit-text-size-adjust: 100%;*/
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
-    background: #999; /* overwrite with theme bg */
+    background: #999; /* overwritten with theme --bg */
     width: 100%;
     margin: 0;
     padding: 0;
@@ -44,7 +44,6 @@ body {
     margin-left: 1rem;
     margin-right: 1rem;
 }
-
 
 
 /* custom facing **************************************************************/
@@ -89,12 +88,12 @@ body {
   --clr-string: #{light:font-lock-string-face:foreground};
 }
 
-body[data-theme='light'] {
+body[data-mode='light'] {
   background: var(--bg);
   color: var(--clr);
 }
 
-body[data-theme='dark'] {
+body[data-mode='dark'] {
   background: var(--bg);
   color: var(--clr);
   --bc-tb: #{dark:mode-line:box:color|dark:default:foreground};
@@ -145,22 +144,22 @@ body[data-theme='dark'] {
     top: 0;
     left: 0;
     width: 100%;
-    background: var(--bg-block); 
-    color: var(--clr-code);      
+    background: var(--bg); 
+    color: var(--clr-code);
     height: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     margin-bottom: 0.5rem;
 }
-#toggle-theme {
+#toggle-mode {
     position: absolute;
     right: 0rem;
     display: block;
     text-align: center;
     font-size: 1.5rem;
-    background: var(--bg-block); 
+    background: var(--bg); 
     color: var(--clr-code);      
     padding-right: 1rem;
     padding-left: 1rem;
@@ -174,12 +173,12 @@ body[data-theme='dark'] {
     display: block;
     text-align: center;
     font-size: 1.5rem;
-    background: var(--bg-block);
+    background: var(--bg);
     color: var(--clr-code);
     padding-left: 1rem;
     padding-right: 1rem;
 }
-#toggle-theme:hover,
+#toggle-mode:hover,
 #toggle-toc:hover {
   cursor: pointer;
 }
@@ -192,19 +191,15 @@ body[data-theme='dark'] {
     max-width: 80rem;
     margin-left: 1rem;
     margin-right: 1rem;
-    border: thin solid var(--bc-block);
-    background: var(--bg-block);
+    background: var(--bg);
     scrollbar-width: none;
     -ms-overflow-style: none;    
 }
-/*
+
 #table-of-contents::-webkit-scrollbar {
   display: none;
 }
-#table-of-contents > h2 {
-  display: none;
-}
-*/
+
 body[data-toc="true"] #content * {
     display: none;
 }
@@ -297,20 +292,18 @@ code {
 }
 
 pre {
-  padding: 20px;
-  border: 1px solid var(--bc-block);
-  background: var(--bg-block);
-  font-size: 0.9rem;
-  overflow-x: scroll;
+    padding: 1rem;
+    border: 1px solid var(--bc-block);
+    border-radius: 0.5rem;
+    background: var(--bg-block);
+    font-size: 0.9rem;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: thin;
 }
 
 pre::-webkit-scrollbar {
   display: none;
-}
-
-pre {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 .todo {
@@ -371,29 +364,41 @@ img {
 }
 
 .org-src-wrapper .org-src-container {
-  position: relative;    
-  border: 1px solid #ccc;
-  border-radius: 15px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
-  padding: 10px;
+    position: relative;
+    border: 1px solid var(--bc-block);
+    border-radius: 0.5rem;
+    background: var(--bg-code);
+}
+
+.org-src-wrapper .org-src-container:has(+ .copyBtn) pre {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.org-src-wrapper .srcBtnBar {
+    width: 100%;
+    background: transparent;
+    position: relative;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
 }
 
 .org-src-wrapper .copyBtn {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 0rem;  
+  right: 0rem;
   background-color: transparent;
   color: var(--clr-doc);
   border: none;
-  padding: 5px 10px;
+  padding: 0.5rem;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 1rem;
-  border-radius: 8px;
+  font-size: 0.8rem;
   cursor: pointer;
   opacity: 0.5;
-  transition: opacity 0.3s;  
+  transition: opacity 0.3s;
 }
 
 .org-src-wrapper .copyBtn:hover {
@@ -401,117 +406,54 @@ img {
 }
 
 .org-src-wrapper .copyBtn i {
-  margin-right: 5px;
+    margin-right: 0.5rem;
+    padding: 0.5rem;
 }
 
 
 /* responsive layouts *********************************************************/
 
-/*
-@media only screen and (max-width: 768px) {
-  #content {
-    width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-}
-
-@media only screen and (min-width: 768px) {
-  #content {
-    width: 768px;
-  }
-}
-
 @media only screen and (min-width: 1024px) {
-  body[data-toc="true"] {
-    align-items: flex-end;
-  }
-  body[data-toc="true"] #content {
-    width: calc(100vw - var(--w-toc) - var(--mg) * 4);
-    margin-right: var(--mg);
-  }
-  body[data-toc="false"] {
-    display: flex;
-    justify-content: center;
-  }
-  body[data-toc="false"] #content {
-    width: 80rem;/*calc(100vw - var(--mg) * 8);
-    margin-right: var(--mg);
-  }    
+    :root {
+	font-size: 0.875rem;
+    }
 }
 
 @media only screen and (max-width: 768px) {
-  #toggle-toc {
-    position: fixed;
-    top: 0;
-    right: 0;
-    cursor: pointer;
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 2em;
-    line-height: 2em;
-    display: block;
-  }
-  #table-of-contents {
-    background: var(--bg);
-    display: none;
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow-y: scroll;
-  }
-  #table-of-contents a {
-    color: var(--clr);
-  }
+    :root {
+	font-size: 0.75rem;
+    }
+    #content {
+	width: 90%;
+    }
+    #view-controls {
+	margin-top: 1.5em;
+    }
+    #toggle-toc[data-show='true'] {
+	padding-top: 1em;
+	padding-left: 5%;
+    }
+    #toggle-mode {
+	padding-top: 1em;	
+	padding-right: 5%;
+    }
+    
 }
 
-@media only screen and (min-width: 1024px) {
-  #table-of-contents {
-    font-size: 0.8rem;
-    position: fixed;
-    left: var(--mg);
-    top: var(--mg);
-    bottom: var(--mg);
-    width: var(--w-toc);
-    overflow-y: scroll;
-  }
+@media only screen and (max-width: 480px) {
+    :root {
+	font-size: 0.625rem;
+    }
+    #content {
+	width: 90%;
+    }
+    #view-controls {
+	margin-top: 1.5em;
+    }    
+    #toggle-toc[data-show='true'] {
+	padding-left: 5%;
+    }
+    #toggle-mode {	
+	padding-right: 5%;
+    }    
 }
-
-
-@media only screen and (max-width: 768px) {
-  #toggle-theme {
-    width: 100%;
-    text-align: center;
-  }
-}
-
-@media only screen and (min-width: 768px) {
-  #toggle-theme {
-    position: absolute;
-    top: var(--mg);
-    right: var(--mg);
-    border-radius: 5px;
-  }
-}
-
-.theme-transition {
-  transition: all 0.5s;
-}
-
-.status {
-  width: 100%;
-}
-
-@media only screen and (max-width: 768px) {
-  ul {
-    padding-left: .5em;
-    margin-left: 0;
-  }
-  li {
-    padding-left: 0;
-    margin-left: 0;
-  }
-}
-*/

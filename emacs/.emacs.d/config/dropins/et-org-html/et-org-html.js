@@ -1,42 +1,20 @@
-let theme = 'dark';  // default
+let cookie = document.cookie.split('; ').find(r => r.startsWith('theme-mode'))
 
-let theme_cookie = document.cookie.split('; ').find(r => r.startsWith('org_html_themify_theme'))
-if (theme_cookie) {
-  theme = theme_cookie.split('=')[1]
+let mode = cookie ? cookie.split('=')[1] : 'dark'; // Default
+
+let toggleModeBtn = document.getElementById('toggle-mode');
+
+setMode(mode);
+
+function setMode(mode) {
+  document.body.dataset.mode = mode;
+  toggleModeBtn.innerHTML = (mode === 'light') ? '&#9789;' : '&#9788;';
+  document.cookie = 'theme-mode=' + mode;
 }
 
-let toggleThemeBtn = document.getElementById('toggle-theme')
-
-if (theme == 'light') {
-  useLightTheme();
-} else {
-  useDarkTheme();
-}
-
-function transition() {
-  document.body.classList.add('theme-transition')
-  setTimeout(() => document.body.classList.remove('theme-transition'), 500)
-}
-
-function useLightTheme(theme) {
-  document.body.dataset.theme = 'light'
-  toggleThemeBtn.innerHTML = '&#9789;'
-  document.cookie = 'org_html_themify_theme=light'
-}
-
-function useDarkTheme(theme) {
-  document.body.dataset.theme = 'dark'
-  toggleThemeBtn.innerHTML = '&#9788;'
-  document.cookie = 'org_html_themify_theme=dark'
-}
-
-toggleThemeBtn.addEventListener('click', function() {
-  transition()
-  if (document.body.dataset.theme == 'light') {
-    useDarkTheme();
-  } else {
-    useLightTheme();
-  }
+toggleModeBtn.addEventListener('click', () => {
+  mode = document.body.dataset.mode === 'dark' ? 'light' : 'dark';
+  setMode(mode);
 })
 
 
@@ -44,27 +22,21 @@ let toggleTocBtn = document.getElementById('toggle-toc')
 let toc = document.getElementById('table-of-contents')
 
 if (toc) {
-  toc.dataset.show = '';
   toggleTocBtn.dataset.show = 'true';
-  toggleTocBtn.addEventListener('click', function() {
-    toc.dataset.show = toc.dataset.show ? '' : 'true';
-    document.body.dataset.toc = toc.dataset.show;
-    toc.addEventListener('click', function() {
-      if (toc.dataset.show) {
-	toc.dataset.show = "";
-      }
+  toggleTocBtn.addEventListener('click', () => {
+    let showingToc = document.body.dataset.toc;
+    document.body.dataset.toc = showingToc ? '' : 'true';
+    toc.addEventListener('click', () => {
       if (document.body.dataset.toc) {
 	document.body.dataset.toc = "";
       }
     })
   })
-} else {
-  document.body.dataset.toc = 'false';
 }
 
 function copyTextToClipboard(text) {
   // Make invisible textarea
-  var textArea = document.createElement("textarea");  
+  var textArea = document.createElement("textarea");
   textArea.style.position = 'fixed';
   textArea.style.top = 0;
   textArea.style.left = 0;
