@@ -308,7 +308,7 @@
 	    "~/-/local/repos/etown.dev/org/header.html")
       (setq et-org-html-extra-css-path
 	    "~/-/local/repos/etown.dev/org/header.css"))))
-
+org-export-with-toc
 (defun et-get-org-publish-project-alist (stem)
   (match system-type 
 	 ('darwin
@@ -322,11 +322,11 @@
 	     :recursive t
 	     :auto-sitemap t
 	     :sitemap-title "Sitemap"
-	     :headline-levels 3
+	     :headline-levels 1
 	     :section-numbers nil
 	     :with-entities t
 	     :with-latex t	     
-	     :with-toc nil
+	     :with-toc t
 	     :with-author nil
 	     :with-creator nil
 	     :with-date nil

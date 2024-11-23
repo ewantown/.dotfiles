@@ -44,12 +44,18 @@ let toggleTocBtn = document.getElementById('toggle-toc')
 let toc = document.getElementById('table-of-contents')
 
 if (toc) {
-  document.body.dataset.toc = 'true';
-  toc.classList.add('toc-show')
+  toc.dataset.show = '';
+  toggleTocBtn.dataset.show = 'true';
   toggleTocBtn.addEventListener('click', function() {
-    toc.classList.add('toc-show')
+    toc.dataset.show = toc.dataset.show ? '' : 'true';
+    document.body.dataset.toc = toc.dataset.show;
     toc.addEventListener('click', function() {
-      toc.classList.remove('toc-show')
+      if (toc.dataset.show) {
+	toc.dataset.show = "";
+      }
+      if (document.body.dataset.toc) {
+	document.body.dataset.toc = "";
+      }
     })
   })
 } else {

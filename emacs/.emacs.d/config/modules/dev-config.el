@@ -36,7 +36,6 @@
     (require 'smartparens-config))
   (use-package company
     :bind
-    ("TAB" . company-indent-or-complete-common)
     (:map company-active-map
 	  ("TAB" . company-complete-common))
     :config
@@ -131,6 +130,7 @@
   "Initialize SBCL (Common Lisp) dev env (Sly)"  
   (message "Initializing Common Lisp mode")
   (message "Sly is unusable - takes over completion-at-point")
+;; - SLY disables company by overwriting completion-at-point functions -
 ;;   (use-package sly
 ;;     :bind
 ;;     (:map sly-mode-map
@@ -144,7 +144,6 @@
 ;; 	       (sly-compile-defun)
 ;; 	       (message "Compiled: %s" form-with-print)))))
 ;;     :config
-;; 					;(setq inferior-lisp-program "sbcl")
 ;;     (setq sly-lisp-implementations '((sbcl ("sbcl") :coding-system utf-8))
 ;; 	  sly-default-lisp 'sbcl
 ;; 	  sly-command-switch-to-existing-lisp 'always
@@ -155,7 +154,7 @@
 ;;     (sly-symbol-completion-mode -1)    
 ;;     (add-hook 'emacs-lisp-mode-hook (lambda () (sly-mode -1)))        
 ;;     (add-hook 'sly-mode-hook 'company-mode)
-;;     (setq completion-at-point-functions ; super annoying bug
+;;     (setq completion-at-point-functions ;-> super annoying bug
 ;; 	  '(company-complete-common)))
 ;;   (use-package sly-quicklisp))
 
