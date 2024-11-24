@@ -1,13 +1,40 @@
+/* et-org-html.css
+;;==============================================================================
+;; Copyright (C) 2024, Ewan Townshend
+
+;; Author: Ewan Townshend
+;; URL: TBD
+;; Version: 1.0
+
+;;==============================================================================
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;; This file is not part of emacs.
+
+;;==============================================================================
+*/
+
 /* basic layout ***************************************************************/
 *,
 *::before,
 *::after {
 	box-sizing: border-box;
 }
-
 html {
     font-family: Sans;
     line-height: 1;
+    font-size: calc(15px + 0.390625vw);
     -webkit-text-size-adjust: 100%;
 }
 
@@ -20,7 +47,6 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    overflow-x: hidden;
     font-family:
 	system-ui,
 	-apple-system,
@@ -47,6 +73,7 @@ body {
 
 
 /* custom facing **************************************************************/
+/* The #{...} are replaced by CSS pre-processing in et-org-html.el */
 :root {
   --bc-tb: #{light:mode-line:box:color|light:default:foreground};
   --bc-block: #{light:org-meta-line:foreground|light:org-meta-line:background};
@@ -113,7 +140,7 @@ body[data-mode='dark'] {
   --bg-done: #{dark:font-lock-comment-face:background};
   --ts-clr: #{dark:font-lock-keyword-face:foreground};
   --mg: 20px;
-  --w-toc: 300px;  
+  --w-toc: 300px;
   --bg-keyword: #{dark:font-lock-keyword-face:background};
   --clr-keyword: #{dark:font-lock-keyword-face:foreground};
   --bg-constant: #{dark:font-lock-constant-face:background};
@@ -137,46 +164,44 @@ body[data-mode='dark'] {
 }
 
 
-
-/* ootb template **************************************************************/
+/* ootb page layout ***********************************************************/
 #view-controls {
     position: relative;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: var(--bg); 
-    color: var(--clr-code);
-    height: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--bg);
+    color: var(--clr-code);
+    height: 2rem;
     margin-top: 1rem;
-    margin-bottom: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
 }
 #toggle-mode {
     position: absolute;
-    right: 0rem;
+    right: 5%;
     display: block;
     text-align: center;
     font-size: 1.5rem;
-    background: var(--bg); 
-    color: var(--clr-code);      
-    padding-right: 1rem;
-    padding-left: 1rem;
+    background: var(--bg);
+    color: var(--clr-code);
+    padding: 0.25rem 0;
 }
 #toggle-toc {
     display: none;
 }
 #toggle-toc[data-show="true"] {
     position: absolute;
-    left: 0rem;
+    left: 5%;
     display: block;
     text-align: center;
     font-size: 1.5rem;
     background: var(--bg);
     color: var(--clr-code);
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 0.25rem 0;
 }
 #toggle-mode:hover,
 #toggle-toc:hover {
@@ -193,7 +218,7 @@ body[data-mode='dark'] {
     margin-right: 1rem;
     background: var(--bg);
     scrollbar-width: none;
-    -ms-overflow-style: none;    
+    -ms-overflow-style: none;
 }
 
 #table-of-contents::-webkit-scrollbar {
@@ -208,8 +233,9 @@ body[data-toc="true"] #content #table-of-contents * {
     display: block;
 }
 
+
 /* misc elements **************************************************************/
-    
+
 hr {
 	height: 0;
 	color: inherit;
@@ -229,9 +255,8 @@ pre {
 	ui-monospace,
 	SFMono-Regular,
 	Consolas,
-	'Liberation Mono',		
+	'Liberation Mono',
 	monospace;
-    font-size: 1em;
 }
 
 small {
@@ -386,7 +411,7 @@ img {
 
 .org-src-wrapper .copyBtn {
   position: absolute;
-  top: 0rem;  
+  top: 0rem;
   right: 0rem;
   background-color: transparent;
   color: var(--clr-doc);
@@ -413,47 +438,45 @@ img {
 
 /* responsive layouts *********************************************************/
 
-@media only screen and (min-width: 1024px) {
-    :root {
-	font-size: 0.875rem;
-    }
-}
-
 @media only screen and (max-width: 768px) {
-    :root {
-	font-size: 0.75rem;
-    }
-    #content {
-	width: 90%;
-    }
     #view-controls {
 	margin-top: 1.5em;
     }
     #toggle-toc[data-show='true'] {
-	padding-top: 1em;
-	padding-left: 5%;
-    }
-    #toggle-mode {
-	padding-top: 1em;	
 	padding-right: 5%;
     }
-    
+    #toggle-mode {
+	padding-left: 5%;
+    }
+    #content {
+	width: 90%;
+    }
+    #content h1 {
+	font-size: 1.5rem;
+    }
+    #content h2 {
+	font-size: 1.25rem;
+    }
 }
 
 @media only screen and (max-width: 480px) {
-    :root {
-	font-size: 0.625rem;
+    #view-controls {
+	margin-top: 2em;
+    }
+    #toggle-toc[data-show='true'] {
+	padding-right: 5%;
+    }
+    #toggle-mode {
+	padding-left: 5%;
     }
     #content {
 	width: 90%;
     }
-    #view-controls {
-	margin-top: 1.5em;
-    }    
-    #toggle-toc[data-show='true'] {
-	padding-left: 5%;
+    #content h1 {
+	font-size: 1.35rem;
     }
-    #toggle-mode {	
-	padding-right: 5%;
-    }    
+    #content h2 {
+	font-size: 1.15rem;
+    }
 }
+

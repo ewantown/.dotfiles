@@ -1,9 +1,45 @@
-;; -*- lexical-binding: t -*-
-;; et-org-html.el
+;; et-org-html.el -*- lexical-binding: t -*-
 ;;==============================================================================
-;; Custom org-to-html publishing pipeline with emacs theme injection
+;; Copyright (C) 2024, Ewan Townshend
+
 ;; Author: Ewan Townshend
-;; Derived from ox-html, org-html-themify, and Dennis Ogbe's config (ogbe.net)
+;; URL: TBD
+;; Version: 1.0
+
+;;==============================================================================
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;; This file is not part of emacs.
+
+;;==============================================================================
+;;; Commentary:
+
+;; This provides an org-to-html publishing pipeline with emacs theme injection.
+;; It enables exporting org files to readable, interactive, responsive html/css.
+;; CSS colors are derived from specified light- and dark-mode emacs themes.
+;; Layout is optimized for browser consumption of org files with toc and code.
+;; Variables are defined to allow users to insert their own header/footer html.
+
+;;; Credits:
+
+;; Shi Tianshu's org-html-themify provided the basic model for css injection.
+;; I have modified that package substantially, so am providing this separately.
+
+;; Various stackoverflow posts greatly helped, but alas, they are lost to me.
+
+;;==============================================================================
+;; Package requires et-org-html.css, et-org-html.js, and:
 
 (require 's)
 (require 'dash)
@@ -14,6 +50,7 @@
 (require 'ox-html)
 (require 'ox-publish)
 (require 'uuidgen)
+
 ;;==============================================================================
 ;; Variables
 
@@ -53,14 +90,15 @@
 
 ;; Temp var to avoid needless reloading of themes
 (defvar et-org-html-temp-theme nil)
+
 ;;==============================================================================
 ;; Setup and Teardown
 
 (defun et-org-html-setup ()
-  "Initialize theme-injecting org-to-html publishing pipeline"  
+  "Initialize theme-injecting org-to-html publishing pipeline"
   (unless et-org-html-is-active
     (setq et-org-html-is-active t)
-    (setq org-html-head-include-default-style nil)  
+    (setq org-html-head-include-default-style nil)
     (add-hook 'org-export-before-processing-hook 'et-org-html-inject)
     (setq et-org-html-initial-face-overrides htmlize-face-overrides
 	  et-org-html-initial-head-extra org-html-head-extra
@@ -72,31 +110,31 @@
 	   '(font-lock-keyword-face
 	     (:foreground "var(--clr-keyword)"
 			  :background "var(--bg-keyword)")
-             font-lock-constant-face
+	     font-lock-constant-face
 	     (:foreground "var(--clr-constant)"
 			  :background "var(--bg-constant)")
-             font-lock-comment-face
+	     font-lock-comment-face
 	     (:foreground "var(--clr-comment)"
 			  :background "var(--bg-comment)")
-             font-lock-comment-delimiter-face
+	     font-lock-comment-delimiter-face
 	     (:foreground "var(--clr-comment-delimiter)"
 			  :background "var(--bg-comment-delimiter)")
-             font-lock-function-name-face
+	     font-lock-function-name-face
 	     (:foreground "var(--function-clr-name)"
 			  :background "var(--function-bg-name)")
-             font-lock-variable-name-face
+	     font-lock-variable-name-face
 	     (:foreground "var(--clr-variable)"
 			  :background "var(--bg-variable)")
-             font-lock-preprocessor-face
+	     font-lock-preprocessor-face
 	     (:foreground "var(--clr-preprocessor)"
 			  :background "var(--bg-preprocessor)")
-             font-lock-doc-face
+	     font-lock-doc-face
 	     (:foreground "var(--clr-doc)"
 			  :background "var(--bg-doc)")
-             font-lock-builtin-face
+	     font-lock-builtin-face
 	     (:foreground "var(--clr-builtin)"
 			  :background "var(--bg-builtin)")
-             font-lock-string-face
+	     font-lock-string-face
 	     (:foreground "var(--clr-string)"
 			  :background "var(--bg-string)"))))))
 (et-org-html-setup)
@@ -106,9 +144,9 @@
     (setq org-html-head-include-default-style et-org-html-initial-default-style)
     (remove-hook 'org-export-before-processing-hook 'et-org-html-inject-style)
     (setq htmlize-face-overrides et-org-html-initial-face-overrides
-          org-html-head-extra    et-org-html-initial-head-extra
+	  org-html-head-extra    et-org-html-initial-head-extra
 	  org-html-preamble      et-org-html-initial-preamble
-          org-html-postamble     et-org-html-initial-postamble)))
+	  org-html-postamble     et-org-html-initial-postamble)))
 
 ;;==============================================================================
 ;; HTML Modifications
@@ -132,7 +170,7 @@
      (insert-file-contents et-org-html-css-path)
      (when (and (not (equal "" et-org-html-extra-css-path))
 		(file-exists-p et-org-html-extra-css-path))
-       (insert-file-contents et-org-html-extra-css-path))     
+       (insert-file-contents et-org-html-extra-css-path))
      (et-org-html-interpolate-css)
      (buffer-string))
    "/*]]>*/-->\n"
@@ -188,11 +226,11 @@
     ;; loop over CSS template variables
     (while (re-search-forward "#{.+?}" nil t)
       (-let* ((beg (match-beginning 0))
-              (end (match-end 0))
-              (str (buffer-substring-no-properties beg end))
-              (val (et-org-html-get-hex-val str)))
-        (delete-region beg end)
-        (insert val)))
+	      (end (match-end 0))
+	      (str (buffer-substring-no-properties beg end))
+	      (val (et-org-html-get-hex-val str)))
+	(delete-region beg end)
+	(insert val)))
     (unless (-contains? initial-themes et-org-html-temp-theme)
       (disable-theme et-org-html-temp-theme)
       (setq custom-enabled-themes initial-themes))
@@ -235,14 +273,14 @@
   (if (not (org-export-read-attribute :attr_html src-block :copy-button))
       (org-export-with-backend 'html src-block contents info)
     (let* ((btn-id (concat "btn_" (s-replace "-" "" (uuidgen-4))))
-           (content
+	   (content
 	    (let ((print-escape-newlines t))
 	      (prin1-to-string (org-export-format-code-default src-block info))))
-           (content^
+	   (content^
 	    (s-chop-prefix "\""
 			   (s-chop-suffix "\""
 					  (s-replace "`" "\\`" content)))))
-      (concat "<div class='org-src-wrapper'>\n"	      
+      (concat "<div class='org-src-wrapper'>\n"
 	      (org-export-with-backend 'html src-block contents info)
 	      (et-org-html-copy-src-button btn-id)
 	      (et-org-html-copy-src-script btn-id content^)
@@ -253,8 +291,8 @@
 (defun et-org-html-copy-src-script (btn-id txt)
   (concat "\n<script type='text/javascript'>\n"
 	  "var copyBtn" btn-id "=document.querySelector('button[name=" btn-id "]');\n"
-          "copyBtn" btn-id ".addEventListener('click', function(event) {\n"
-          "copyTextToClipboard(`" txt "`);\n});\n</script>\n"))
+	  "copyBtn" btn-id ".addEventListener('click', function(event) {\n"
+	  "copyTextToClipboard(`" txt "`);\n});\n</script>\n"))
 
 
 (org-export-define-derived-backend 'et-html 'html
@@ -283,6 +321,7 @@ Return output file name."
 		      plist pub-dir))
 
 ;;==============================================================================
+;; Defined mode
 
 (define-minor-mode et-org-html-mode
   "Mode for prettier export of .org to .html"
