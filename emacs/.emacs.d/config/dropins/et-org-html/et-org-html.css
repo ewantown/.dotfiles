@@ -73,7 +73,7 @@ body {
 
 
 /* custom facing **************************************************************/
-/* The #{...} are replaced by CSS pre-processing in et-org-html.el */
+/* The variable values are injected by CSS pre-processing in et-org-html.el */
 :root {
   --bc-tb: #{light:mode-line:box:color|light:default:foreground};
   --bc-block: #{light:org-meta-line:foreground|light:org-meta-line:background};

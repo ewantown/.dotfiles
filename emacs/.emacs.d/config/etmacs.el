@@ -15,7 +15,7 @@
 
 (mapc (lambda (dir) (add-to-list 'load-path dir)) 
       (delete-dups (mapcar (lambda (x) (file-name-directory x))
-			   (directory-files-recursively CONF "**"))))
+			   (directory-files-recursively CONF "**" nil nil t))))
 
 (setq custom-file (concat CONF "custom.el"))
 
