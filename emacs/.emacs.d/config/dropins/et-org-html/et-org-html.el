@@ -54,8 +54,11 @@
 ;;==============================================================================
 ;; Variables
 
-(defvar et-org-html-theme-alist '((dark . tango-dark) (light . leuven))
+(defvar et-org-html-theme-alist '((light . leuven) (dark . tango-dark))
   "Emacs themes used to generate inline css for dark and light modes.")
+
+(defvar et-org-html-default-mode 'dark
+  "Default HTML page view-mode ('light or 'dark)")
 
 (defun et-org-html-filepath (filename)
   "Get expanded path to a file local to this package"
@@ -182,7 +185,7 @@
    (with-temp-buffer
      (when (and (not (equal "" et-org-html-header-path))
 		(file-exists-p et-org-html-header-path))
-       (insert "<div id='injected-head' class='injected'>")
+       (insert "<div id='injected-header' class='injected'>")
        (insert (with-temp-buffer (insert-file-contents et-org-html-header-path)
 				 (buffer-string)))
        (insert "</div>"))
@@ -198,13 +201,15 @@
    (with-temp-buffer
      (when (and (not (equal "" et-org-html-footer-path))
 		(file-exists-p et-org-html-footer-path))
-       (insert "<div id='injected-foot' class='injected'>")
+       (insert "<div id='injected-footer' class='injected'>")
        (insert (with-temp-buffer (insert-file-contents et-org-html-footer-path)
 				 (buffer-string)))
        (insert "</div>"))
      (buffer-string))
    "<script type=\"text/javascript\">\n"
    "<!--/*--><![CDATA[/*><!--*/\n"
+   "document.cookie = 'theme-mode="
+   (if (eq et-org-html-default-mode 'light) "light" "dark") "'\n"
    (with-temp-buffer
      (insert-file-contents et-org-html-js-path)
      (when (and (not (equal "" et-org-html-extra-js-path))
@@ -292,21 +297,59 @@
   (concat "\n<script type='text/javascript'>\n"
 	  "var copyBtn" btn-id "=document.querySelector('button[name=" btn-id "]');\n"
 	  "copyBtn" btn-id ".addEventListener('click', function(event) {\n"
-	  "copyTextToClipboard(`" txt "`);\n});\n</script>\n"))
+	  "let res = copyTextToClipboard(`" txt "`);"
+	  "copyBtn" btn-id ".textContent = res ? 'copied' : 'error';"
+	  "setTimeout(() => { copyBtn" btn-id ".textContent = 'copy';}, 3000);"
+	  "\n});\n</script>\n"))
 
 
 (org-export-define-derived-backend 'et-html 'html
   :translate-alist '((src-block . et-org-html-src-block)))
 
-(defun et-org-html-export-to-html (file)
-  "Exports the current org-mode buffer to customized HTML file"
-  (interactive "FFile Name: ")
-  (org-export-to-file 'et-html file))
-
 ;;==============================================================================
-;; This extends the ox-html function org-html-publish-to-html to the new backend
+;; These functions extend the (similarly named) ox-html ones to the new backend
+
+(defun et-org-html-export-to-html
+    (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to a HTML file using et-org-html custom backend.
+
+If narrowing is active in the current buffer, only export its
+narrowed part.
+
+If a region is active, export that region.
+
+A non-nil optional argument ASYNC means the process should happen
+asynchronously.  The resulting file should be accessible through
+the `org-export-stack' interface.
+
+When optional argument SUBTREEP is non-nil, export the sub-tree
+at point, extracting information from the headline properties
+first.
+
+When optional argument VISIBLE-ONLY is non-nil, don't export
+contents of hidden elements.
+
+When optional argument BODY-ONLY is non-nil, only write code
+between \"<body>\" and \"</body>\" tags.
+
+EXT-PLIST, when provided, is a property list with external
+parameters overriding Org default settings, but still inferior to
+file-local settings.
+
+Return output file's name."
+  (interactive)
+  (let* ((extension (concat
+		     (when (> (length org-html-extension) 0) ".")
+		     (or (plist-get ext-plist :html-extension)
+			 org-html-extension
+			 "html")))
+	 (file (org-export-output-file-name extension subtreep))
+	 (org-export-coding-system org-html-coding-system))
+    (org-export-to-file 'et-html file
+      async subtreep visible-only body-only ext-plist)))
+
 (defun et-org-html-publish-to-html (plist filename pub-dir)
-  "Publish an org file to HTML using a custom backend.
+  "Publish an org file to HTML using a et-org-html custom backend.
 
 FILENAME is the filename of the Org file to be published.  PLIST
 is the property list for the given project.  PUB-DIR is the
@@ -320,6 +363,10 @@ Return output file name."
 				  "html"))
 		      plist pub-dir))
 
+(defun et-org-html-export-to-html-file (file)
+  "Exports the current org-mode buffer to customized HTML file"
+  (interactive "FFile Name: ")
+  (org-export-to-file 'et-html file))
 ;;==============================================================================
 ;; Defined mode
 
