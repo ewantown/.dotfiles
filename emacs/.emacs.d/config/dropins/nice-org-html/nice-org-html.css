@@ -41,6 +41,7 @@ html {
 body {
     background: #999; /* overwritten with theme --bg */
     width: 100%;
+    min-height: 100vh;
     margin: 0;
     padding: 0;
     display: flex;
@@ -69,6 +70,7 @@ body {
     max-width: 80rem;
     margin-left: 1rem;
     margin-right: 1rem;
+    flex: 1;
 }
 
 
@@ -382,10 +384,10 @@ a:hover {
   font-size: 1.25em;
 }
 
-
 img {
-  width: 100%;
+  max-width: 100%;
 }
+
 .org-src-wrapper {
   position: relative;
 }

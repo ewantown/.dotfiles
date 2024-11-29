@@ -290,26 +290,19 @@
 (defun et-init-org-html-publish (&optional stem)
   (interactive)
   (let ((stem (or stem STEM)))
-    (use-package et-org-html
+    (use-package nice-org-html
       :ensure nil ; dropin
-      :hook (org-mode . et-org-html-mode)
+      :hook (org-mode . nice-org-html-mode)
       :config
-      (setq et-org-html-theme-alist
-	    '((dark . tomorrow-night-eighties)
-	      ;;(dark . zenburn)
-	      (light . solo-jazz)))
       (setq org-html-validation-link nil)
       (setq org-publish-timestamp-directory
 	    (concat user-emacs-directory ".org-timestamps/"))
       (setq org-publish-use-timestamps-flag nil)
+      (setq nice-org-html-theme-alist
+            '((dark . tomorrow-night-eighties) (light . solo-jazz)))
       (setq org-publish-project-alist
 	    (et-get-org-publish-project-alist stem))
-      ;; Personal website customization
-      (setq et-org-html-header-path
-	    "~/-/local/repos/etown.dev/org/header.html")
-      (setq et-org-html-extra-css-path
-	    "~/-/local/repos/etown.dev/org/header.css"))))
-
+      )))
 (defun et-get-org-publish-project-alist (stem)
   (match system-type
 	 ('darwin
@@ -317,8 +310,7 @@
 	    ("etown.dev/files"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/")
 	     :base-extension "org"
-	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/")
-	     :publishing-function et-org-html-publish-to-html ; extension
+	     :publishing-directory ,(concat stem "local/repos/etown.dev/site/")	     
 	     :htmlized-source t
 	     :recursive t
 	     :auto-sitemap t
@@ -333,16 +325,24 @@
 	     :with-date nil
 	     :with-email nil
 	     :time-stamp-file nil
+	     :publishing-function
+	     ,(nice-org-html-make-publish-to-html-with
+	       '((dark . tomorrow-night-eighties) (light . solo-jazz))
+	       'dark
+	       "~/-/local/repos/etown.dev/org/base/header.html"
+	       "~/-/local/repos/etown.dev/org/base/footer.html"
+	       "~/-/local/repos/etown.dev/org/base/style.css"
+	       "")
 	     )
 	    ("etown.dev/images"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/images/")
 	     :base-extension "jpg\\|gif\\|png"
-	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/images/")
+	     :publishing-directory ,(concat stem "local/repos/etown.dev/site/images/")
 	     :publishing-function org-publish-attachment)
 	    ("etown.dev/other"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/other/")
-	     :base-extension "css\\|el"
-	     :publishing-directory ,(concat stem "local/repos/etown.dev/html/other/")
+	     :base-extension "./"
+	     :publishing-directory ,(concat stem "local/repos/etown.dev/site/other/")
 	     :publishing-function org-publish-attachment)
 	    ("etown.dev"
 	     :components ("etown.dev/files"
