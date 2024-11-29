@@ -326,12 +326,12 @@
 	     :with-email nil
 	     :time-stamp-file nil
 	     :publishing-function
-	     ,(nice-org-html-make-publish-to-html-with
+	     ,(nice-org-html-make-publishing-function
 	       '((dark . tomorrow-night-eighties) (light . solo-jazz))
 	       'dark
-	       "~/-/local/repos/etown.dev/org/base/header.html"
-	       "~/-/local/repos/etown.dev/org/base/footer.html"
-	       "~/-/local/repos/etown.dev/org/base/style.css"
+	       (concat stem "local/repos/etown.dev/org/base/header.html")
+	       (concat stem "local/repos/etown.dev/org/base/footer.html")
+	       (concat stem "local/repos/etown.dev/org/base/style.css")
 	       "")
 	     )
 	    ("etown.dev/images"

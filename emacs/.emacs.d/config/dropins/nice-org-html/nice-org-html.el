@@ -375,10 +375,10 @@
 				  "html"))
 		      plist pub-dir))
 
-(defmacro nice-org-html-make-publish-to-html-with
+(defmacro nice-org-html-make-publishing-function
     (&optional theme-alist default-mode header-html footer-html css js)
   "Creates org-publishing function which quasi-closes over passed configuration"
-  (let ((sym (gensym "nice-org-html-publish-to-html-")))
+  (let ((sym (gensym "nice-org-html-publishing-function-")))
     `(progn
        (defun ,sym (plist filename pub-dir)       
 	 (let* ((theme-alist (or (and (listp ,theme-alist)
