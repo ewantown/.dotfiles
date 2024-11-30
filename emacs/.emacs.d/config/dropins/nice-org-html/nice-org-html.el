@@ -1,10 +1,11 @@
-;;; nice-org-html.el --- prettier org-to-html export. -*- lexical-binding: t -*-
+;;; nice-org-html.el --- Prettier org-to-html export -*- lexical-binding: t -*-
 ;;==============================================================================
 ;; Copyright (C) 2024, Ewan Townshend
 
 ;; Author: Ewan Townshend <ewan@etown.dev>
 ;; URL: https://github.com/ewantown/nice-org-html
-;; Version: 1.0
+;; Package-Version: 1.0
+;; Package-Requires: ((emacs "25.1") (s "1.13.0") (dash "2.19.1") (htmlize "1.58") (uuidgen "1.0"))
 
 ;;==============================================================================
 ;; This file is not part of GNU Emacs.
@@ -25,26 +26,34 @@
 ;;==============================================================================
 ;;; Commentary:
 
-;; This provides an org-to-html publishing pipeline with emacs theme injection.
+;; This provides an org-to-html publishing pipeline with Emacs theme injection.
 ;; It enables exporting org files to readable, interactive, responsive html/css.
-;; CSS colors are derived from specified light- and dark-mode emacs themes.
+;; CSS colors are derived from specified light- and dark-mode Emacs themes.
 ;; Layout is optimized for browser consumption of org files with toc and code.
-;; Variables are defined to allow users to insert their own header/footer html.
 
 ;;; Credits:
 
 ;; Shi Tianshu's org-html-themify provided the basic model for css injection.
-;; This package has diverged substantially, so is provided independently.
+;; This package has diverged enough to warrant independent distribution.
 
 ;; Various stackoverflow posts greatly helped, but alas, they are lost to me.
 
 ;;==============================================================================
-;;; TODO:
-;;
-;; * Make function to "guess" face-attribute values that are undefined in theme
+;;; Package provides:
+
+;; nice-org-html-mode
+;; nice-org-html-export-to-html
+;; nice-org-html-export-to-html-file
+;; nice-org-html-publish-to-html
+;; nice-org-html-make-publishing-function
 
 ;;==============================================================================
-;;; Code
+;;; TODO:
+;;
+;; * Make function to "guess" face-attribute values unspecified by theme
+
+;;==============================================================================
+;;; Code:
 
 ;; Included in emacs >= 25.1
 (require 'org)
@@ -52,11 +61,13 @@
 (require 'ox-html)
 (require 'ox-publish)
 
-;; Other required
+;; Package requires
 (require 's)
 (require 'dash)
 (require 'htmlize)
 (require 'uuidgen)
+
+;; Distributed with this
 (require 'hexrgb)
 
 ;;==============================================================================
@@ -64,20 +75,20 @@
 
 ;; Mandatory, with defaults:
 (defvar nice-org-html-theme-alist '((light . tsdh-light) (dark . tsdh-dark))
-  "Emacs themes used to generate inline css for 'light and 'dark modes.")
+  "Associates 'light and 'dark view modes with Emacs themes.")
 
 (defvar nice-org-html-default-mode 'dark
-  "Default nice HTML page view-mode ('light or 'dark)")
+  "Default nice HTML page view mode ('light or 'dark).")
 
 ;; Optional
 (defvar nice-org-html-header ""
-  "Path to (optional) header html file to inject as page header")
+  "Path to (optional) header html file to inject as page header.")
 (defvar nice-org-html-footer ""
-  "Path to (optional) footer html file to inject as page footer")
+  "Path to (optional) footer html file to inject as page footer.")
 (defvar nice-org-html-css ""
-  "Path to (optional) CSS file to inject")
+  "Path to (optional) CSS file to inject.")
 (defvar nice-org-html-js ""
-  "Path to (optional) JS  file to inject")
+  "Path to (optional) JS  file to inject.")
 
 ;;==============================================================================
 ;;; Package local variables
@@ -96,23 +107,24 @@
 (defvar nice-org-html--temp-theme nil)
 
 (defun nice-org-html--local-path (filename)
-  "Get expanded path to a file local to this package"
+  "Get expanded path FILENAME in this directory."
   (let ((dir (file-name-directory (or load-file-name (buffer-file-name)))))
     (expand-file-name filename dir)))
 
 (defvar nice-org-html--base-css (nice-org-html--local-path "nice-org-html.css")
-  "Path to included CSS template that styles package-generated HTML")
+  "Path to included CSS template that styles package-generated HTML.")
 (defvar nice-org-html--base-js  (nice-org-html--local-path "nice-org-html.js")
-  "Path to included JS file that governs package-generated HTML")
+  "Path to included JS file that governs package-generated HTML.")
 
 ;;==============================================================================
 ;; Setup and Teardown
 
 (defun nice-org-html--setup ()
+  "Set up nice-org-html mode."
   (unless nice-org-html--is-active
-    (add-hook 'org-export-before-processing-hook #'nice-org-html--inject)
+    (add-hook 'org-export-before-processing-functions #'nice-org-html--inject)
     (setq nice-org-html--is-active t
-	  org-html-head-include-default-style nil    
+	  org-html-head-include-default-style nil
 	  nice-org-html--initial-face-overrides htmlize-face-overrides
 	  nice-org-html--initial-head-extra org-html-head-extra
 	  nice-org-html--initial-preamble   'org-html-preamble
@@ -152,10 +164,11 @@
 			  :background "var(--bg-string)"))))))
 
 (defun nice-org-html--teardown ()
+  "Tear down nice-org-html mode."
   (when nice-org-html--is-active
-    (remove-hook 'org-export-before-processing-hook #'nice-org-html--inject)
+    (remove-hook 'org-export-before-processing-functions #'nice-org-html--inject)
     (setq nice-org-html--is-active nil
-	  org-html-head-include-default-style nice-org-html--initial-default-style	      
+	  org-html-head-include-default-style nice-org-html--initial-default-style
 	  htmlize-face-overrides nice-org-html--initial-face-overrides
 	  org-html-head-extra nice-org-html--initial-head-extra
 	  org-html-preamble   nice-org-html--initial-preamble
@@ -165,7 +178,7 @@
 ;; HTML Modifications
 
 (defun nice-org-html--inject (export-backend)
-  "Inject page-level styling and scripts in header, preamble and postamble"
+  "Inject custom styling and scripts when EXPORT-BACKEND is nice-html."
   (when (eq export-backend 'nice-html)
     (let ((style (nice-org-html--style))
 	  (preamble (nice-org-html--preamble))
@@ -175,7 +188,7 @@
       (setq org-html-postamble  postamble))))
 
 (defun nice-org-html--style ()
-  "Constructs html <style> element for header"
+  "Construct html <style> element for header."
   (concat
    "<style type='text/css'>\n"
    "<!--/*--><![CDATA[/*><!--*/\n"
@@ -190,7 +203,7 @@
    "</style>\n"))
 
 (defun nice-org-html--preamble ()
-  "Constructs html preamble to main content area"
+  "Construct html preamble to main content area."
   (concat
    (with-temp-buffer
      (when (and (not (equal "" nice-org-html-header))
@@ -206,7 +219,7 @@
    "</div>"))
 
 (defun nice-org-html--postamble ()
-  "Constructs html postamble to main content area"
+  "Construct html postamble to main content area."
   (concat
    (with-temp-buffer
      (when (and (not (equal "" nice-org-html-footer))
@@ -229,14 +242,14 @@
    "/*]]>*/-->\n"
    "</script>"
    "<div hidden>"
-   "Generated by: https://github.com/ewantown/nice-org-html"   
+   "Generated by: https://github.com/ewantown/nice-org-html"
    "</div>"))
 
 ;;==============================================================================
 ;; Emacs theme / CSS Interpolation
 
 (defun nice-org-html--interpolate-css ()
-  "Interpolate hex values in CSS template"
+  "Interpolate hex values in CSS template."
   (let ((initial-themes custom-enabled-themes))
     (setq inhibit-redisplay t)
     (mapc (lambda (th) (disable-theme th)) initial-themes)
@@ -257,7 +270,7 @@
     (setq inhibit-redisplay nil)))
 
 (defun nice-org-html--get-hex-val (str)
-  "Parse/Interp string of form #{mode:entity:attribute:key?|...} against themes"
+  "Interpret STR of form #{mode:entity:attribute:key?|...} against themes."
   (let* ((clauses (split-string (substring str 2 -1) "|"))
 	 (val (car (-keep 'nice-org-html--interp-clause clauses))))
     (cond ((null val) "initial")
@@ -265,6 +278,7 @@
 	  ((hexrgb-color-name-to-hex val 2)))))
 
 (defun nice-org-html--interp-clause (c)
+  "Interpret clause C against themes."
   (-let* (((m  e  a  k)  (s-split ":" c))
 	  ((ms es as ks) `(,(intern m)
 			   ,(intern e)
@@ -286,7 +300,7 @@
 ;; Custom export backend for better org doc content export
 
 (defun nice-org-html--src-block (src-block contents info)
-  "Transform org-src-block to html, adding a 'copy to clipboard' button."
+  "Transform SRC-BLOCK with CONTENTS and INFO to html with copy button."
     (let* ((btn-id (concat "btn_" (s-replace "-" "" (uuidgen-4))))
 	   (content
 	    (let ((print-escape-newlines t))
@@ -302,9 +316,11 @@
 	      "</div>")))
 
 (defun nice-org-html--copy-src-button (btn-id)
+  "Construct html <button> for unique BTN-ID."
   (concat "<button class='copyBtn' name=" btn-id ">copy</button>"))
 
 (defun nice-org-html--copy-src-script (btn-id txt)
+  "Construct html <script> for copy button with BTN-ID and source content TXT."
   (concat "\n<script type='text/javascript'>\n"
 	  "var copyBtn" btn-id "=document.querySelector('button[name=" btn-id "]');\n"
 	  "copyBtn" btn-id ".addEventListener('click', function(event) {\n"
@@ -327,10 +343,11 @@
 ;;==============================================================================
 ;; These functions extend the (similarly named) ox-html ones to the new backend
 
+;;;###autoload
 (defun nice-org-html-export-to-html
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to HTML file in PWD using nice-org-html custom backend.
-   See docs for org-html-export-to-html, which this function emulates."
+See docs for org-html-export-to-html, which this function emulates."
   (interactive)
   (let* ((nice-org-html-header (read-string "HTML header file (optional): "
 					    nice-org-html-header nil nil nil))
@@ -350,9 +367,10 @@
     (org-export-to-file 'nice-html file
       async subtreep visible-only body-only ext-plist)))
 
+;;;###autoload
 (defun nice-org-html-export-to-html-file
     (&optional async subtreep visible-only body-only ext-plist)
-  "Exports current buffer as nice HTML to interactively specified file"
+  "Export current buffer as nice HTML to interactively specified file."
   (let* ((file (read-string "Target file path (mandatory): "))
 	 (nice-org-html-header (read-string "HTML header file (optional): "
 					    nice-org-html-header nil nil nil))
@@ -365,9 +383,10 @@
     (org-export-to-file 'nice-html file
       async subtreep visible-only body-only ext-plist nil)))
 
+;;;###autoload
 (defun nice-org-html-publish-to-html (plist filename pub-dir)
   "Publish an org file to HTML using nice-org-html custom export backend.
-   See docs for org-html-publish-to-html, which this function emulates."
+See docs for org-html-publish-to-html, which this function emulates."
   (org-publish-org-to 'nice-html filename
 		      (concat (when (> (length org-html-extension) 0) ".")
 			      (or (plist-get plist :html-extension)
@@ -375,12 +394,14 @@
 				  "html"))
 		      plist pub-dir))
 
+;;;###autoload
 (defmacro nice-org-html-make-publishing-function
-    (&optional theme-alist default-mode header-html footer-html css js)
-  "Creates org-publishing function which quasi-closes over passed configuration"
+    (theme-alist default-mode header-html footer-html css js)
+  "Create org-publishing function which quasi-closes over passed configuration."
+  (declare (debug t))
   (let ((sym (gensym "nice-org-html-publishing-function-")))
     `(progn
-       (defun ,sym (plist filename pub-dir)       
+       (defun ,sym (plist filename pub-dir)
 	 (let* ((theme-alist (or (and (listp ,theme-alist)
 				      (assoc 'light ,theme-alist)
 				      (assoc 'dark  ,theme-alist)
@@ -398,15 +419,17 @@
 	   (nice-org-html-publish-to-html plist filename pub-dir)))
        ',sym)))
 
-
 ;;==============================================================================
 ;; Defined mode
 
+;;;###autoload
 (define-minor-mode nice-org-html-mode
-  "Mode for prettier export of .org to .html"
+  "Mode for prettier .org to .html exporting."
   :version 1.0
   (if nice-org-html-mode (nice-org-html--setup) (nice-org-html--teardown)))
 
 ;;==============================================================================
+
 (provide 'nice-org-html)
-;;; end nice-org-html.el
+
+;;; nice-org-html.el ends here

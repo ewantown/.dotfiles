@@ -398,6 +398,7 @@ Interactively, or with non-nil MSGP, show color name in the echo area."
       (when msgp (message "Color: `%s'" color))
       color)))
 
+;;;###autoload
 (defun hexrgb-rgb-hex-string-p (color &optional laxp)
   "Non-nil if COLOR is an RGB string #XXXXXXXXXXXX.
 Each X is a hex digit.  The number of Xs must be a multiple of 3, with
@@ -656,6 +657,7 @@ and blue components."
           (/ (hexrgb-hex-to-int (substring color (1+ len) (+ 1 len len))) max-nb)
           (/ (hexrgb-hex-to-int (substring color (+ 1 len len)))          max-nb))))
 
+;;;###autoload
 (defun hexrgb-color-name-to-hex (color &optional nb-digits)
   "Return the RGB hex string, starting with \"#\", for the COLOR name.
 If COLOR is already a string starting with \"#\", then just return it.
