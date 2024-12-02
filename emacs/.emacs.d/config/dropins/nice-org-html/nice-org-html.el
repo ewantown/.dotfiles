@@ -1,11 +1,14 @@
-;;; nice-org-html.el --- Prettier org-to-html export -*- lexical-binding: t -*-
-;;==============================================================================
+;;; nice-org-html.el --- Prettier org-to-html export -*- lexical-binding: t; -*-
+
 ;; Copyright (C) 2024, Ewan Townshend
+
+;;==============================================================================
 
 ;; Author: Ewan Townshend <ewan@etown.dev>
 ;; URL: https://github.com/ewantown/nice-org-html
 ;; Package-Version: 1.0
 ;; Package-Requires: ((emacs "25.1") (s "1.13.0") (dash "2.19.1") (htmlize "1.58") (uuidgen "1.0"))
+;; Keywords: org, org-export, html, css, js, tools
 
 ;;==============================================================================
 ;; This file is not part of GNU Emacs.
@@ -31,7 +34,7 @@
 ;; CSS colors are derived from specified light- and dark-mode Emacs themes.
 ;; Layout is optimized for browser consumption of org files with toc and code.
 
-;;; Credits:
+;; Credits:
 
 ;; Shi Tianshu's org-html-themify provided the basic model for css injection.
 ;; This package has diverged enough to warrant independent distribution.
@@ -39,8 +42,8 @@
 ;; Various stackoverflow posts greatly helped, but alas, they are lost to me.
 
 ;;==============================================================================
-;;; Package provides:
-
+;; Package provides:
+;;
 ;; nice-org-html-mode
 ;; nice-org-html-export-to-html
 ;; nice-org-html-export-to-html-file
@@ -48,7 +51,7 @@
 ;; nice-org-html-make-publishing-function
 
 ;;==============================================================================
-;;; TODO:
+;; TODO:
 ;;
 ;; * Make function to "guess" face-attribute values unspecified by theme
 
@@ -71,14 +74,14 @@
 (require 'hexrgb)
 
 ;;==============================================================================
-;;; User configuration variables
+;; User configuration variables
 
 ;; Mandatory, with defaults:
 (defvar nice-org-html-theme-alist '((light . tsdh-light) (dark . tsdh-dark))
-  "Associates 'light and 'dark view modes with Emacs themes.")
+  "Associates light and dark view modes with Emacs themes.")
 
 (defvar nice-org-html-default-mode 'dark
-  "Default nice HTML page view mode ('light or 'dark).")
+  "Default nice HTML page view mode ((quote light) or (quote dark)).")
 
 ;; Optional
 (defvar nice-org-html-header ""
@@ -91,7 +94,7 @@
   "Path to (optional) JS  file to inject.")
 
 ;;==============================================================================
-;;; Package local variables
+;; Package local variables
 
 ;; Backups of initial values
 (defvar nice-org-html--initial-face-overrides nil)
@@ -273,9 +276,7 @@
   "Interpret STR of form #{mode:entity:attribute:key?|...} against themes."
   (let* ((clauses (split-string (substring str 2 -1) "|"))
 	 (val (car (-keep 'nice-org-html--interp-clause clauses))))
-    (cond ((null val) "initial")
-	  ((hexrgb-rgb-hex-string-p val) val)
-	  ((hexrgb-color-name-to-hex val 2)))))
+    (if (null val) "initial" (nice-org-html--color-to-hex val 2))))
 
 (defun nice-org-html--interp-clause (c)
   "Interpret clause C against themes."
@@ -429,7 +430,35 @@ See docs for org-html-publish-to-html, which this function emulates."
   (if nice-org-html-mode (nice-org-html--setup) (nice-org-html--teardown)))
 
 ;;==============================================================================
+;; These helper functions are derived from Drew Adams' hexrgb.el
+;; https://www.emacswiki.org/emacs/download/hexrgb.el
 
+(defun nice-org-html--rgb-hex-string-p (color)
+  "Non-nil if COLOR is an RGB string #XXXXXXXXXXXX.
+Each X is a hex digit. The number of Xs must be a multiple of 3, with
+the same number of Xs for each of red, green, and blue."
+  (string-match "^#\\([a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]\\)+$" color))
+
+(defun nice-org-html--color-to-hex (color &optional nb-digits)
+  "Return the RGB hex string, starting with \"#\", for the COLOR.
+NB-DIGITS is number of hex digits per component, in (1 2 3 4), default 4.
+The output string is `#' followed by NB-DIGITS hex digits for each
+color component. So for default NB-DIGITS, the form is \"#RRRRGGGGBBBB\"."
+  (cond ((nice-org-html--rgb-hex-string-p color) color)
+	((not (x-color-values color)) (error "No such color: %S" color))
+	(t (let ((digits (or nb-digits 4))
+		 (components (x-color-values color))
+		 (int-to-hex
+		  (lambda (int nbd)
+		    (substring
+		     (format (concat "%0" (number-to-string nb-digits) "X") int)
+		     (- nb-digits)))))
+	     (concat "#"
+		     (funcall int-to-hex (nth 0 components) digits)      ; red
+		     (funcall int-to-hex (nth 1 components) digits)      ; green
+		     (funcall int-to-hex (nth 2 components) digits)))))) ; blue
+
+;;==============================================================================
 (provide 'nice-org-html)
 
 ;;; nice-org-html.el ends here

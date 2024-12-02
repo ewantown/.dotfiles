@@ -4,7 +4,7 @@
 ;; Copyright (C) 2024, Ewan Townshend
 
 ;; Author: Ewan Townshend
-;; URL: TBD
+;; URL: https://github.com/ewantown/nice-org-html
 ;; Version: 1.0
 
 ;;==============================================================================
