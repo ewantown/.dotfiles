@@ -37,6 +37,11 @@ if [ -d "$HOME/.nvm" ] ; then
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # nvm bash_completion
 fi
 
+if [ -d "/opt/homebrew/opt/gnu-tar/libexec" ] ; then
+    # Prefer GNU tar
+    export PATH="/opt/homebrew/opt/gnu-tar/libexec/gnubin:$PATH"    
+fi
+
 # Source environment secrets
 if [ -d "$HOME/.env" ] ; then
     source "$HOME/.env"
