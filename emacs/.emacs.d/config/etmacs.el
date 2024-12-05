@@ -72,21 +72,27 @@
 (patch)
 
 ;; Main dispatch
-(if (display-graphic-p)
-    (progn (et-init-gui CONF)
-	   (et-init-org STEM)
-	   (et-init-etc STEM)
-	   (et-init-dev STEM LANGS)
-	   )
-  (progn (load-theme 'modus-vivendi)
-	 (et-init-frame)
-	 (et-init-fileio)
-	 (et-init-globals)
-	 (et-init-ergonomics)
-	 (add-hook 'after-init-hook 'shell)
-	 ))
-;==============================================================================
+(cond ((display-graphic-p)
+       (progn (et-init-gui CONF)
+	      (et-init-org STEM)
+	      (et-init-etc STEM)
+	      (et-init-dev STEM LANGS)
+	      ))
+      ((member "-pretty" command-line-args)
+       (progn (setq command-line-args (delete "-pretty" command-line-args))
+	      (et-init-gui CONF)
+	      (et-init-etc STEM)
+	      (et-init-dev STEM LANGS)	      
+	      (add-hook 'after-init-hook 'shell)))
+      (t
+       (progn (load-theme 'modus-vivendi)
+	      (et-init-frame)
+	      (et-init-fileio)
+	      (et-init-globals)
+	      (et-init-ergonomics)
+	      (add-hook 'after-init-hook 'shell))))
 
+;==============================================================================
 (setq byte-compile-warnings '()) ; errors only
 (when (equal 1 (random 10))
   (byte-recompile-directory (concat user-emacs-directory "elpa/") 0))

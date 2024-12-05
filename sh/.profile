@@ -43,9 +43,14 @@ if [ -d "/opt/homebrew/opt/gnu-tar/libexec" ] ; then
 fi
 
 # Source environment secrets
-if [ -d "$HOME/.env" ] ; then
-    source "$HOME/.env"
+if [ -d "~/.env" ] ; then
+    source ~/.env
     echo $PING_ENV
+fi
+
+# Source bindings
+if [ -d "~/.inputrc" ] ; then
+    bind -f ~/.inputrc
 fi
 
 scheme() {
