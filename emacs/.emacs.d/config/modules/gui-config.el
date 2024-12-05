@@ -55,7 +55,9 @@
       (use-package undo-tree
 	:bind
 	(("C-/" . undo-tree-undo)
-	 ("C-M-/" . undo-tree-redo))
+	 ("C-_" . undo-tree-undo)
+	 ("C-M-/" . undo-tree-redo)
+	 ("C-M-_" . undo-tree-redo))
 	:config
 	(progn
 	  (setq undo-tree-history-directory-alist `((".*" . ,undos)))
