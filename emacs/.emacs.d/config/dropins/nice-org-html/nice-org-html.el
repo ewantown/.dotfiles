@@ -70,9 +70,6 @@
 (require 'htmlize)
 (require 'uuidgen)
 
-;; Distributed with this
-(require 'hexrgb)
-
 ;;==============================================================================
 ;; User configuration variables
 
@@ -348,7 +345,7 @@
 (defun nice-org-html-export-to-html
     (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to HTML file in PWD using nice-org-html custom backend.
-See docs for org-html-export-to-html, which this function emulates."
+See docs for `org-html-export-to-html', which this function emulates."
   (interactive)
   (let* ((nice-org-html-header (read-string "HTML header file (optional): "
 					    nice-org-html-header nil nil nil))
@@ -371,7 +368,8 @@ See docs for org-html-export-to-html, which this function emulates."
 ;;;###autoload
 (defun nice-org-html-export-to-html-file
     (&optional async subtreep visible-only body-only ext-plist)
-  "Export current buffer as nice HTML to interactively specified file."
+  "Export current buffer as nice HTML to interactively specified file.
+Optional arguments are pass-through, so see docs for `org-export-to-file'."
   (let* ((file (read-string "Target file path (mandatory): "))
 	 (nice-org-html-header (read-string "HTML header file (optional): "
 					    nice-org-html-header nil nil nil))
@@ -387,7 +385,7 @@ See docs for org-html-export-to-html, which this function emulates."
 ;;;###autoload
 (defun nice-org-html-publish-to-html (plist filename pub-dir)
   "Publish an org file to HTML using nice-org-html custom export backend.
-See docs for org-html-publish-to-html, which this function emulates."
+See docs for `org-html-publish-to-html', which this function emulates."
   (org-publish-org-to 'nice-html filename
 		      (concat (when (> (length org-html-extension) 0) ".")
 			      (or (plist-get plist :html-extension)
@@ -398,7 +396,13 @@ See docs for org-html-publish-to-html, which this function emulates."
 ;;;###autoload
 (defmacro nice-org-html-make-publishing-function
     (theme-alist default-mode header-html footer-html css js)
-  "Create org-publishing function which quasi-closes over passed configuration."
+  "Create org-publishing function which quasi-closes over passed configuration.
+THEME-ALIST shadows `nice-org-html-theme-alist'.
+DEFAULT-MODE shadows `nice-org-html-default-mode'.
+HEADER-HTML shadows `nice-org-html-header'.
+FOOTER-HTML shadows `nice-org-html-footer'.
+CSS shadows `nice-org-html-css'.
+JS shadows `nice-org-html-js'."
   (declare (debug t))
   (let ((sym (gensym "nice-org-html-publishing-function-")))
     `(progn
@@ -435,7 +439,7 @@ See docs for org-html-publish-to-html, which this function emulates."
 
 (defun nice-org-html--rgb-hex-string-p (color)
   "Non-nil if COLOR is an RGB string #XXXXXXXXXXXX.
-Each X is a hex digit. The number of Xs must be a multiple of 3, with
+Each X is a hex digit.  The number of Xs must be a multiple of 3, with
 the same number of Xs for each of red, green, and blue."
   (string-match "^#\\([a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]\\)+$" color))
 
@@ -443,7 +447,7 @@ the same number of Xs for each of red, green, and blue."
   "Return the RGB hex string, starting with \"#\", for the COLOR.
 NB-DIGITS is number of hex digits per component, in (1 2 3 4), default 4.
 The output string is `#' followed by NB-DIGITS hex digits for each
-color component. So for default NB-DIGITS, the form is \"#RRRRGGGGBBBB\"."
+color component.  So for default NB-DIGITS, the form is \"#RRRRGGGGBBBB\"."
   (cond ((nice-org-html--rgb-hex-string-p color) color)
 	((not (x-color-values color)) (error "No such color: %S" color))
 	(t (let ((digits (or nb-digits 4))
@@ -451,8 +455,8 @@ color component. So for default NB-DIGITS, the form is \"#RRRRGGGGBBBB\"."
 		 (int-to-hex
 		  (lambda (int nbd)
 		    (substring
-		     (format (concat "%0" (number-to-string nb-digits) "X") int)
-		     (- nb-digits)))))
+		     (format (concat "%0" (number-to-string nbd) "X") int)
+		     (- nbd)))))
 	     (concat "#"
 		     (funcall int-to-hex (nth 0 components) digits)      ; red
 		     (funcall int-to-hex (nth 1 components) digits)      ; green
