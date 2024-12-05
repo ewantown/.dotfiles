@@ -53,6 +53,9 @@
 	    `(("\\(.+/\\)*\\(.*?\\)" ,(concat autosaves "\\2"))))
       (setq auto-save-list-file-prefix (concat autosaves ".saves-"))
       (use-package undo-tree
+	:bind
+	(("C-/" . undo-tree-undo)
+	 ("C-M-/" . undo-tree-redo))
 	:config
 	(progn
 	  (setq undo-tree-history-directory-alist `((".*" . ,undos)))

@@ -56,7 +56,8 @@
 	    ("C-a" . et/chatgpt-map)
 	    ("s" . org-store-link)
 	    ("C-n" . org-next-visible-heading)
-	    ("C-p" . org-previous-visible-heading)))))
+	    ("C-p" . org-previous-visible-heading)
+	    ("P" . org-publish-all)))))
 
 (defun et-init-org-time (env)
   (progn

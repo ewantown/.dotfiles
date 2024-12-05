@@ -67,12 +67,11 @@ body {
 
 #content {
     width: 80%;
-    max-width: 80rem;
+    max-width: 80ch;
     margin-left: 1rem;
     margin-right: 1rem;
     flex: 1;
 }
-
 
 /* custom facing **************************************************************/
 /* The variable values are injected by CSS pre-processing in et-org-html.el */
