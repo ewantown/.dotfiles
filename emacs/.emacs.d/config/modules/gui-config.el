@@ -3,10 +3,10 @@
 ;==============================================================================
 (defun et-init-gui (config)
   "Set up Ewan's UI"
-  (et-init-frame)  
+  (et-init-frame)
   (et-init-fileio)
   (et-init-globals)
-  (et-init-ergonomics)  
+  (et-init-ergonomics)
   (et-init-facing config))
 
 (defun et-init-frame ()
@@ -19,19 +19,20 @@
 	  (internal-border-width . 0)
 	  (vertical-scroll-bars . nil)
 	  (horizontal-scroll-bars . nil)))
-    (menu-bar-mode -1)
-    (tool-bar-mode -1)
-    (scroll-bar-mode -1)
-    (set-scroll-bar-mode nil))
+  (global-hl-line-mode 1)
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (set-scroll-bar-mode nil))
 
-(defun et-init-facing (config)  
+(defun et-init-facing (config)
   "Initialize prettier Emacs"
   (interactive)
   (let ((themes (concat config "/themes")))
     (add-to-list 'load-path themes)
     (add-to-list 'custom-theme-load-path themes)
-    (load-theme 'tomorrow-night-eighties t)    
-    (set-face-foreground 'fill-column-indicator "grey30")    
+    (load-theme 'tomorrow-night-eighties t)
+    (set-face-foreground 'fill-column-indicator "grey30")
     (with-system darwin
       (add-to-list 'default-frame-alist '(font . "Menlo 13")))))
 
@@ -95,7 +96,7 @@
 			:background "#5F7F5F"
 			:foreground "#5F7F5F"
 			:distant-foreground "#5F7F5F"
-			:box "#494949"))  
+			:box "#494949"))
   (use-package windmove
     :bind (("C-c <left>" . windmove-left)
 	   ("C-c <right>" . windmove-right)
@@ -113,8 +114,8 @@
     :config (which-key-mode))
   (use-package helm
   :bind (("M-x" . helm-M-x)
-         ("M-y" . helm-show-kill-ring)
-         ("C-x C-f" . helm-find-files)
+	 ("M-y" . helm-show-kill-ring)
+	 ("C-x C-f" . helm-find-files)
 	 ;("C-x M-f" . helm-find)
 	 ("C-x M-f" . (lambda () (interactive) (helm-find "P")))
 	 ("C-x M-b" . list-buffers)
@@ -130,7 +131,7 @@
   (global-unset-key (kbd "C-,"))
   (global-unset-key (kbd "C-."))
   (global-set-key (kbd "C-.") 'end-of-buffer)
-  (global-set-key (kbd "C-,") 'beginning-of-buffer)  
+  (global-set-key (kbd "C-,") 'beginning-of-buffer)
   ; FN2-... : manage buffers
   (global-set-key (kbd "M-s-[") 'previous-buffer)
   (global-set-key (kbd "M-s-]") 'next-buffer)
@@ -142,7 +143,7 @@
   (global-set-key (kbd "M-s-<up>") 'enlarge-window)
   (global-set-key (kbd "M-s-<right>") 'enlarge-window-horizontally)
   (global-set-key (kbd "M-s-<down>") 'shrink-window)
-  (global-set-key (kbd "M-s-<left>") 'shrink-window-horizontally)  
+  (global-set-key (kbd "M-s-<left>") 'shrink-window-horizontally)
   ; FN3-<arrow> : manage point
   ; Arrows windmove between buffers
   ; Chords - not needed yet
@@ -153,5 +154,5 @@
   ;(key-chord-mode 1)
   )
 
-;==============================================================================    
+;==============================================================================
 (provide 'gui-config)
