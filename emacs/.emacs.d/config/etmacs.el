@@ -84,6 +84,7 @@
       ((member "-pretty" command-line-args)
        (progn (setq command-line-args (delete "-pretty" command-line-args))
 	      (et-init-gui CONF)
+	      (et-init-org STEM)
 	      (et-init-etc STEM)
 	      (et-init-dev STEM LANGS)	      
 	      (add-hook 'after-init-hook 'shell)))
