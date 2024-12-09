@@ -292,7 +292,6 @@
   (interactive)
   (let ((stem (or stem STEM)))
     (use-package nice-org-html
-      :ensure nil ; dropin
       :hook (org-mode . nice-org-html-mode)
       :config
       (setq org-html-validation-link nil)

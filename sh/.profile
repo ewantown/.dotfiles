@@ -58,6 +58,26 @@ scheme() {
 }
 export -f scheme
 
+defcdx() {
+    if [ -d "$2" ] ; then
+        opid="cd$1"
+        if [ -z "$(type -t $opid)" ] ; then
+            eval "$opid () { cd \"$2\"; }"
+            export "$opid"
+            return 0
+        else
+            echo "Error: $opid already defined"
+            return 2
+        fi
+    else
+        echo "Error: $2 is not a directory"        
+    fi
+}
+export defcdx
+defcdx "_" "$HOME/-" > /dev/null
+defcdx "c" "/mnt/c"  > /dev/null
+defcdx "d" "/mnt/d"  > /dev/null
+
 PROMPT_COMMAND='PS1_PATH=sh:$(sed "s:\([^/\.]\)[^/]*/:\1/:g" <<< ${PWD/#$HOME/u/et})'
 export PS1='$PS1_PATH>'
 

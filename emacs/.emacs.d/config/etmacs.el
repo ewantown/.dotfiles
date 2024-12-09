@@ -17,6 +17,9 @@
       (delete-dups (mapcar (lambda (x) (file-name-directory x))
 			   (directory-files-recursively CONF "**" nil nil t))))
 
+(mapc (lambda (dir) (add-to-list 'exec-path dir))
+     `(,(concat DROPINS "lsp-servers/")))
+ 
 (setq custom-file (concat CONF "custom.el"))
 
 (let ((env (concat CONF ".env")))
@@ -28,10 +31,10 @@
 (setq package-enable-at-startup t)
 (setq package-archives
       '(
-	("gnu" . "http://elpa.gnu.org/packages/")
-	("melpa-stable" . "http://stable.melpa.org/packages/")
+	;("gnu" . "http://elpa.gnu.org/packages/")
+	;("melpa-stable" . "http://stable.melpa.org/packages/")
 	("melpa" . "http://melpa.org/packages/")
-	("org" . "http://orgmode.org/elpa/")
+	;("org" . "http://orgmode.org/elpa/")
 	;("jcs-elpa" . "http://jcs-emacs.github.io/jcs-elpa/packages/")
 	))
 (package-initialize)

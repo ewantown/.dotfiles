@@ -34,6 +34,12 @@
   (use-package smartparens
     :config
     (require 'smartparens-config))
+  (use-package paredit
+    :hook (emacs-lisp-mode lisp-mode scheme-mode)
+    :bind
+    (:map paredit-mode-map
+	  ("M-<right>" . paredit-forward-slurp-sexp)
+	  ("M-<left>" . paredit-forward-barf-sexp)))  
   (use-package company
     :bind
     (:map company-active-map
@@ -60,13 +66,13 @@
     (eglot-events-buffer-size 0)
     (eglot-extend-to-xref nil)
     (eglot-ignored-server-capabilities
-     '(					;hoverProvider
+     '(;;hoverProvider
        documentHighlightProvider
        documentFormattingProvider
        documentRangeFormattingProvider
        documentOnTypeFormattingProvider
        colorProvider
-					;foldingRangeProvider
+       ;;foldingRangeProvider
        )))
   (add-hook 'prog-mode-hook
 	    (lambda ()
@@ -126,49 +132,23 @@
 	   (lambda () (interactive)
 	     (progn (insert "(lambda ())") (backward-char 2)))))))
 
-(defun l-sbcl ()  
-  "Initialize SBCL (Common Lisp) dev env (Sly)"  
+(defun l-sbcl ()
+  "Initialize SBCL (Common Lisp) dev env (Sly)"
+  (interactive)
   (message "Initializing Common Lisp mode")
-  (message "Sly is unusable - takes over completion-at-point")
-;; - SLY disables company by overwriting completion-at-point functions -
-;;   (use-package sly
-;;     :bind
-;;     (:map sly-mode-map
-;; 	  ("C-c C-f" . 
-;; 	   (lambda ()
-;; 	     "Compile and print to mrepl"
-;; 	     (interactive)
-;; 	     (let* ((form (sly-sexp-at-point))
-;; 		    (form-with-print (format "(print %s)" form))
-;; 		    (sly-command (sly-interactive-eval form-with-print)))
-;; 	       (sly-compile-defun)
-;; 	       (message "Compiled: %s" form-with-print)))))
-;;     :config
-;;     (setq sly-lisp-implementations '((sbcl ("sbcl") :coding-system utf-8))
-;; 	  sly-default-lisp 'sbcl
-;; 	  sly-command-switch-to-existing-lisp 'always
-;; 	  sly-auto-select-connection 'always)    
-;;     (add-hook 'mrepl-mode-hook 'company-mode)    
-;;     (et-schemify-mode-map lisp-mode-map)
-;;     (et-schemify-mode-map sly-mode-map)
-;;     (sly-symbol-completion-mode -1)    
-;;     (add-hook 'emacs-lisp-mode-hook (lambda () (sly-mode -1)))        
-;;     (add-hook 'sly-mode-hook 'company-mode)
-;;     (setq completion-at-point-functions ;-> super annoying bug
-;; 	  '(company-complete-common)))
-;;   (use-package sly-quicklisp))
-
-;; (use-package paredit
-;;   :bind
-;;   (:map paredit-mode-map
-;; 	("M-<right>" . paredit-forward-slurp-sexp)
-;; 	("M-<left>" . paredit-forward-barf-sexp))
-;;   :hook (lisp-mode emacs-lisp-mode scheme-mode sly-mode)
-  )
-
-
+  (use-package slime
+    :config
+    (load (expand-file-name "~/quicklisp/slime-helper.el"))
+    (setq inferior-lisp-program "/opt/homebrew/bin/sbcl")
+    (et-schemify-mode-map lisp-mode-map)))
 ;===============================================================================
 ;; JS/TS
+
+(defun l-latex ()
+  "Initialize latex environment"
+  (message "Initializing LaTeX mode")	       
+  (add-to-list 'eglot-server-programs
+	       '((latex-mode) "texlab")))
 
 (defun l-typescript ()
   "Initialize TypeScript dev env"
