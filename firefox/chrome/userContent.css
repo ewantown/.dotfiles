@@ -1,0 +1,49 @@
+/* Set user pref: toolkit.legacyUserProfileCustomizations.stylesheets = true */
+
+@-moz-document url(about:home), url(about:newtab), url(about:privatebrowsing) {
+    .click-target-container *, .top-sites-list * {
+        color: #fff !important ;
+        text-shadow: 2px 2px 2px #222 !important ;
+    }
+
+    body::before {
+        content: "" ;
+        z-index: -1 ;
+        position: fixed ;
+        top: 0 ;
+        left: 0 ;        
+        background:
+	    no-repeat url("logo.svg") center,
+	    no-repeat #2a2826 url("circ2.gif") center / 711px auto;
+        width: 100vw ;
+        height: 100vh ;
+    }
+}
+
+/* url bar text */
+#urlbar-input::placeholder {
+  opacity: 0 !important;
+}
+
+/* firefox logo */
+html body.activity-stream div#root div div.outer-wrapper.ds-outer-wrapper-breakpoint-override.only-search.visible-logo main div.non-collapsible-section div.search-wrapper div.logo-and-wordmark div.logo {
+    display:none !important;
+}
+
+/* 'Firefox' banner */
+html body.activity-stream div#root div div.outer-wrapper.ds-outer-wrapper-breakpoint-override.only-search.visible-logo main div.non-collapsible-section div.search-wrapper div.logo-and-wordmark div.wordmark {
+    display:none !important;
+}
+
+/* fake search bar */
+html body.activity-stream div#root div div.outer-wrapper.ds-outer-wrapper-breakpoint-override.only-search.visible-logo main div.non-collapsible-section div.search-wrapper div.search-inner-wrapper button.search-handoff-button {
+    opacity:0 !important;
+    width:100vw;
+    height:100vh;
+}
+
+/* settings button */
+html body.activity-stream div#root div menu.personalizeButtonWrapper span button.icon.icon-settings.personalize-button.personalize-animate-enter-done {
+    opacity:0 !important;
+}
+

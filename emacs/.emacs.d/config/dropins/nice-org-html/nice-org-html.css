@@ -1,0 +1,495 @@
+/* nice-org-html.css
+;;==============================================================================
+;; Copyright (C) 2024, Ewan Townshend
+
+;; Author: Ewan Townshend
+;; URL: https://github.com/ewantown/nice-org-html
+;; Version: 1.2
+
+;;==============================================================================
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;; This file is not part of emacs.
+
+;;==============================================================================
+*/
+
+/* basic layout ***************************************************************/
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+html {
+    font-family: Sans;
+    line-height: 1.3;
+    font-size: calc(15px + 0.390625vw);
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    background: #999; /* overwritten with theme --bg */
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family:
+	system-ui,
+	-apple-system,
+	'Segoe UI',
+	Roboto,
+	Helvetica,
+	Arial,
+	sans-serif,
+	'Apple Color Emoji',
+	'Segoe UI Emoji';
+}
+
+#preamble,
+#postamble {
+    width: 100%;
+}
+
+#content {
+    width: 80%;
+    max-width: 80ch;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    flex: 1;
+}
+
+/* custom facing **************************************************************/
+/* The variable values are injected by CSS pre-processing in et-org-html.el */
+:root {
+  --bc-tb: #{light:mode-line:box:color|light:default:foreground};
+  --bc-block: #{light:org-meta-line:foreground|light:org-meta-line:background};
+  --clr: #{light:default:foreground};
+  --clr-tb-hd: #{light:mode-line:foreground};
+  --clr-code: #{light:mode-line:foreground};
+  --bg: #{light:default:background};
+  --bg-code: #{light:mode-line:background};
+  --bg-tb-hd: #{light:mode-line:background};
+  --bg-block: #{light:org-block:background};
+  --clr-link: #{light:font-lock-constant-face:foreground};
+  --clr-title: #{light:default:foreground};
+  --clr-todo: #{light:font-lock-string-face:foreground};
+  --bg-todo: #{light:font-lock-string-face:background};
+  --clr-done: #{light:font-lock-comment-face:foreground};
+  --bg-done: #{light:font-lock-comment-face:background};
+  --ts-clr: #{light:font-lock-keyword-face:foreground};
+  --mg: 20px;
+  --w-toc: 300px;
+  --bg-keyword: #{light:font-lock-keyword-face:background};
+  --clr-keyword: #{light:font-lock-keyword-face:foreground};
+  --bg-constant: #{light:font-lock-constant-face:background};
+  --clr-constant: #{light:font-lock-constant-face:foreground};
+  --bg-comment: #{light:font-lock-comment-face:background};
+  --clr-comment: #{light:font-lock-comment-face:foreground};
+  --bg-comment-delimiter: #{light:font-lock-comment-delimiter-face:background};
+  --clr-comment-delimiter: #{light:font-lock-comment-delimiter-face:foreground};
+  --bg-function: #{light:font-lock-function-name-face:background};
+  --clr-function: #{light:font-lock-function-name-face:foreground};
+  --bg-variable: #{light:font-lock-variable-name-face:background};
+  --clr-variable: #{light:font-lock-variable-name-face:foreground};
+  --bg-preprocessor: #{light:font-lock-preprocessor-face:background};
+  --clr-preprocessor: #{light:font-lock-preprocessor-face:foreground};
+  --bg-doc: #{light:font-lock-doc-face:background};
+  --clr-doc: #{light:font-lock-doc-face:foreground};
+  --bg-builtin: #{light:font-lock-builtin-face:background};
+  --clr-builtin: #{light:font-lock-builtin-face:foreground};
+  --bg-string: #{light:font-lock-string-face:background};
+  --clr-string: #{light:font-lock-string-face:foreground};
+}
+
+body[data-mode='light'] {
+  background: var(--bg);
+  color: var(--clr);
+}
+
+body[data-mode='dark'] {
+  background: var(--bg);
+  color: var(--clr);
+  --bc-tb: #{dark:mode-line:box:color|dark:default:foreground};
+  --bc-block: #{dark:org-meta-line:foreground|dark:org-meta-line:background};
+  --clr: #{dark:default:foreground};
+  --clr-code: #{dark:mode-line:foreground};
+  --clr-tb-hd: #{dark:mode-line:foreground};
+  --bg: #{dark:default:background};
+  --bg-tb-hd: #{dark:mode-line:background};
+  --bg-code: #{dark:mode-line:background};
+  --bg-block: #{dark:org-block:background};
+  --clr-link: #{dark:font-lock-constant-face:foreground};
+  --clr-title: #{dark:default:foreground};
+  --clr-todo: #{dark:font-lock-string-face:foreground};
+  --bg-todo: #{dark:font-lock-string-face:background};
+  --clr-done: #{dark:font-lock-comment-face:foreground};
+  --bg-done: #{dark:font-lock-comment-face:background};
+  --ts-clr: #{dark:font-lock-keyword-face:foreground};
+  --mg: 20px;
+  --w-toc: 300px;
+  --bg-keyword: #{dark:font-lock-keyword-face:background};
+  --clr-keyword: #{dark:font-lock-keyword-face:foreground};
+  --bg-constant: #{dark:font-lock-constant-face:background};
+  --clr-constant: #{dark:font-lock-constant-face:foreground};
+  --bg-comment: #{dark:font-lock-comment-face:background};
+  --clr-comment: #{dark:font-lock-comment-face:foreground};
+  --bg-comment-delimiter: #{dark:font-lock-comment-delimiter-face:background};
+  --clr-comment-delimiter: #{dark:font-lock-comment-delimiter-face:foreground};
+  --bg-function: #{dark:font-lock-function-name-face:background};
+  --clr-function: #{dark:font-lock-function-name-face:foreground};
+  --bg-variable: #{dark:font-lock-variable-name-face:background};
+  --clr-variable: #{dark:font-lock-variable-name-face:foreground};
+  --bg-preprocessor: #{dark:font-lock-preprocessor-face:background};
+  --clr-preprocessor: #{dark:font-lock-preprocessor-face:foreground};
+  --bg-doc: #{dark:font-lock-doc-face:background};
+  --clr-doc: #{dark:font-lock-doc-face:foreground};
+  --bg-builtin: #{dark:font-lock-builtin-face:background};
+  --clr-builtin: #{dark:font-lock-builtin-face:foreground};
+  --bg-string: #{dark:font-lock-string-face:background};
+  --clr-string: #{dark:font-lock-string-face:foreground};
+}
+
+
+/* ootb page layout ***********************************************************/
+#view-controls {
+    position: sticky;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--bg);
+    color: var(--clr-code);
+    height: 2.5rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    z-index: 100;
+    border-radius: 5px; /* Rounded corners */
+}
+#toggle-mode {
+    position: absolute;
+    right: 5%;
+    display: block;
+    text-align: center;
+    font-size: 1.5rem;
+    background: var(--bg);
+    color: var(--clr-code);
+    padding: 0.25rem 0;
+}
+#goto-top {
+    display: none;
+}
+#goto-top[data-show="true"] {
+    position: relative;
+    display: block;
+    text-align: center;
+    font-size: 1rem;
+    background: var(--bg);
+    color: var(--clr-code);
+    padding: 0.25rem 0;
+}
+#toggle-toc {
+    display: none;
+}
+#toggle-toc[data-show="true"] {
+    position: absolute;
+    left: 5%;
+    display: block;
+    text-align: center;
+    font-size: 1.5rem;
+    background: var(--bg);
+    color: var(--clr-code);
+    padding: 0.25rem 0;
+}
+
+#toggle-toc:hover,
+#goto-top:hover,
+#toggle-mode:hover {
+    cursor: pointer;
+}
+
+#table-of-contents {
+    display: none;
+}
+#table-of-contents[data-show="true"] {
+    width: 80%;
+    max-width: 80rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    background: var(--bg);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#table-of-contents::-webkit-scrollbar {
+  display: none;
+}
+
+body[data-toc="true"] #content * {
+    display: none;
+}
+body[data-toc="true"] #content #table-of-contents,
+body[data-toc="true"] #content #table-of-contents * {
+    display: block;
+}
+
+
+/* misc elements **************************************************************/
+
+hr {
+	height: 0;
+	color: inherit;
+}
+
+b,
+strong {
+	font-weight: bolder;
+}
+
+code,
+kbd,
+samp,
+pre {
+    font-family:
+	Menlo,
+	ui-monospace,
+	SFMono-Regular,
+	Consolas,
+	'Liberation Mono',
+	monospace;
+}
+
+small {
+	font-size: 80%;
+}
+
+sub,
+sup {
+	font-size: 75%;
+	line-height: 0;
+	position: relative;
+	vertical-align: baseline;
+}
+
+sub {
+	bottom: -0.25em;
+}
+
+sup {
+	top: -0.5em;
+}
+
+table {
+	text-indent: 0;
+	border-color: inherit;
+}
+
+summary {
+	display: list-item;
+}
+
+h1 {
+  color: var(--clr-title);
+  text-align: center;
+}
+h2, h3, h4, h5, h6, h7 {
+  font-family: Sans Serif;
+}
+h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+code {
+  color: var(--clr-code);
+  background: var(--bg-code);
+  border-radius: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+pre {
+    padding: 1rem;
+    border: 1px solid var(--bc-block);
+    border-radius: 0.5rem;
+    background: var(--bg-block);
+    font-size: 0.9rem;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: thin;
+}
+
+pre::-webkit-scrollbar {
+  display: none;
+}
+
+.todo {
+  color: var(--clr-todo);
+  background: var(--bg-todo);
+}
+
+.done {
+  color: var(--clr-done);
+  background: var(--bg-done);
+}
+
+.timestamp-wrapper {
+  font-size: 0.8rem;
+  color: var(--clr-ts);
+}
+
+table {
+  width: 100%;
+  border: 2px solid var(--bc-tb);
+}
+
+thead {
+  color: var(--clr-tb-hd);
+  background: var(--bg-tb-hd);
+}
+
+td, th {
+  border: thin solid var(--bc-tb);
+}
+
+li {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+#text-table-of-contents li a:before {
+    content: "• "
+}
+
+a {
+  text-decoration: none;
+  color: var(--clr-link);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.MathJax_Display {
+  font-size: 1.25em;
+}
+
+img {
+  max-width: 100%;
+}
+
+.org-src-wrapper {
+  position: relative;
+}
+
+.org-src-wrapper .org-src-container {
+    position: relative;
+    border: 1px solid var(--bc-block);
+    border-radius: 0.5rem;
+    background: var(--bg-code);
+}
+
+.org-src-wrapper .org-src-container:has(+ .copyBtn) pre {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.org-src-wrapper .srcBtnBar {
+    width: 100%;
+    background: transparent;
+    position: relative;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.org-src-wrapper .copyBtn {
+  position: absolute;
+  top: 0rem;
+  right: 0rem;
+  background-color: transparent;
+  color: var(--clr-doc);
+  border: none;
+  padding: 0.5rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.8rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.org-src-wrapper .copyBtn:hover {
+  opacity: 1;
+}
+
+.org-src-wrapper .copyBtn i {
+    margin-right: 0.5rem;
+    padding: 0.5rem;
+}
+
+
+/* responsive layouts *********************************************************/
+
+@media only screen and (max-width: 768px) {
+    #toggle-toc[data-show='true'] {
+	padding-right: 5%;
+    }
+    #toggle-mode {
+	padding-left: 5%;
+    }
+    #content {
+	width: 90%;
+    }
+    #content h1 {
+	font-size: 1.75rem;
+    }
+    #content h2 {
+	font-size: 1.5rem;
+    }
+    #content h3 {
+	font-size: 1.25rem;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    #view-controls {
+	padding-top: 1.5em;
+	padding-bottom: 1.5em;
+    }
+    #toggle-toc[data-show='true'] {
+	padding-right: 5%;
+    }
+    #toggle-mode {
+	padding-left: 5%;
+    }
+    #content {
+	width: 90%;
+    }
+    #content h1 {
+	font-size: 1.5rem;
+    }
+    #content h2 {
+	font-size: 1.3rem;
+    }
+    #content h2 {
+	font-size: 1.1urem;
+    }    
+}
+

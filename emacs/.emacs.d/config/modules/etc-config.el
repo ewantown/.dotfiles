@@ -128,4 +128,14 @@
 ;    (comint-send-string proc "ora_eat/a37371242@stu\n")))
 
 ;==============================================================================
+(setq erc-server "irc.libera.chat"
+      erc-nick "etown"    
+      erc-user-full-name "ET"      
+      erc-track-shorten-start 8
+      erc-autojoin-mode 1
+      erc-autojoin-channels-alist
+      '(("irc.libera.chat" "#systemcrafters" "#emacs" "#lisp"))
+      erc-kill-buffer-on-part t
+      erc-auto-query 'bury)
+;==============================================================================
 (provide 'etc-config)

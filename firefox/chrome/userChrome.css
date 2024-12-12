@@ -1,0 +1,16 @@
+.urlbar-input::placeholder,
+.searchbar-textbox::placeholder {
+    opacity:0 !important;
+}
+
+image#identity-icon[tooltiptext=""] {
+    opacity:0 !important;
+    display:none !important;
+}
+
+box#identity-icon-box:has(image#identity-icon[tooltiptext=""]) {
+    background-image: url("ship.svg") !important;
+    background-size: cover;
+    z-index:1 !important;
+}
+

@@ -292,9 +292,10 @@
 
 ;===============================================================================
 (defun et-init-org-html-publish (&optional stem)
-  (interactive)
+  (interactive)  
   (let ((stem (or stem STEM)))
     (use-package nice-org-html
+      :ensure nil ; use local repo for dev
       :hook (org-mode . nice-org-html-mode)
       :config
       (setq org-html-validation-link nil)
@@ -310,10 +311,35 @@
   (match system-type
 	 ('darwin
 	  `(
+	    ("nice-org-html/docs"
+	     :base-directory ,(concat stem "local/repos/nice-org-html/docs/sample/")
+	     :base-extension "org"
+	     :publishing-directory ,(concat stem "local/repos/nice-org-html/docs/")
+	     :htmlized-source t
+	     :headline-levels 3
+	     :section-numbers nil
+	     :with-entities t
+	     :with-latex t
+	     :with-toc t
+	     :with-author nil
+	     :with-creator nil
+	     :with-date nil
+	     :with-email nil
+	     :time-stamp-file nil
+	     :publishing-function
+	     ,(nice-org-html-make-publishing-function
+	       '((dark . tomorrow-night-eighties) (light . solo-jazz))
+	       'dark
+	       nil
+	       (concat stem "local/repos/nice-org-html/docs/sample/header.html")
+	       (concat stem "local/repos/nice-org-html/docs/sample/footer.html")
+	       (concat stem "local/repos/nice-org-html/docs/sample/style.css")
+	       "")	     
+	     )
 	    ("etown.dev/files"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/")
 	     :base-extension "org"
-	     :publishing-directory ,(concat stem "local/repos/etown.dev/site/")	     
+	     :publishing-directory ,(concat stem "local/repos/etown.dev/site/")
 	     :htmlized-source t
 	     :recursive t
 	     :auto-sitemap t
@@ -332,6 +358,7 @@
 	     ,(nice-org-html-make-publishing-function
 	       '((dark . tomorrow-night-eighties) (light . solo-jazz))
 	       'dark
+	       nil
 	       (concat stem "local/repos/etown.dev/org/base/header.html")
 	       (concat stem "local/repos/etown.dev/org/base/footer.html")
 	       (concat stem "local/repos/etown.dev/org/base/style.css")
@@ -348,9 +375,7 @@
 	     :publishing-directory ,(concat stem "local/repos/etown.dev/site/other/")
 	     :publishing-function org-publish-attachment)
 	    ("etown.dev"
-	     :components ("etown.dev/files"
-			  "etown.dev/images"
-			  "etown.dev/other"))
+	     :components ("etown.dev/files" "etown.dev/images" "etown.dev/other"))
 	    )
 	  )
 	 ('gnu/linux  '())
