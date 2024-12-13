@@ -36,19 +36,24 @@
 ;;                                     (pdf-view-midnight-minor-mode 1)))))
 
 ;===============================================================================
-(defun et-init-ai-tools ()
-    (use-package gptel
-      :config
-      (progn
-	(setq gptel-model "mistralai/Mixtral-8x7B-Instruct-v0.1"
-              gptel-backend
-              (gptel-make-openai "HAL"
-		:host "api.together.xyz"
-		:key (getenv "TAI_KEY")
-		:stream t
-		:models '("mistralai/Mixtral-8x7B-Instruct-v0.1"
-			  "codellama/CodeLlama-13b-Instruct-hf"
-			  "codellama/CodeLlama-34b-Instruct-hf"))))))
+(defun et-init-ai-tools ()  
+  ;; (use-package chatgpt-shell
+  ;;   :custom
+  ;;   ((chatgpt-shell-openai-key (getenv "TAI_KEY"))
+  ;;    (chatgpt-shell-api-url-base "api.together.ai")
+  ;;    (chatgpt-shell-model-version "mistralai/Mixtral-8x7B-Instruct-v0.1")))
+  (use-package gptel
+    :config
+    (progn
+      (setq gptel-model "mistralai/Mixtral-8x7B-Instruct-v0.1"
+            gptel-backend
+            (gptel-make-openai "HAL"
+	      :host "api.together.ai"
+	      :key (getenv "TAI_KEY")
+	      :stream t
+	      :models '("mistralai/Mixtral-8x7B-Instruct-v0.1"
+			"codellama/CodeLlama-13b-Instruct-hf"
+			"codellama/CodeLlama-34b-Instruct-hf"))))))
 
 
 ;(use-package wolfram
