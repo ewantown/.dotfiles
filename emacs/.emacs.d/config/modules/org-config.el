@@ -316,7 +316,7 @@
 	     :base-extension "org"
 	     :publishing-directory ,(concat stem "local/repos/nice-org-html/docs/")
 	     :htmlized-source t
-	     :headline-levels 3
+	     :headline-levels 5
 	     :section-numbers nil
 	     :with-entities t
 	     :with-latex t
@@ -334,7 +334,7 @@
 	       (concat stem "local/repos/nice-org-html/docs/sample/header.html")
 	       (concat stem "local/repos/nice-org-html/docs/sample/footer.html")
 	       (concat stem "local/repos/nice-org-html/docs/sample/style.css")
-	       "")	     
+	       "")
 	     )
 	    ("etown.dev/files"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/")
