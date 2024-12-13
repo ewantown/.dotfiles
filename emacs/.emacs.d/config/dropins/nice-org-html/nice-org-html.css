@@ -457,15 +457,6 @@ img {
     #content {
 	width: 90%;
     }
-    #content h1 {
-	font-size: 1.75rem;
-    }
-    #content h2 {
-	font-size: 1.5rem;
-    }
-    #content h3 {
-	font-size: 1.25rem;
-    }
 }
 
 @media only screen and (max-width: 480px) {
@@ -482,14 +473,5 @@ img {
     #content {
 	width: 90%;
     }
-    #content h1 {
-	font-size: 1.5rem;
-    }
-    #content h2 {
-	font-size: 1.3rem;
-    }
-    #content h2 {
-	font-size: 1.1urem;
-    }    
 }
 
