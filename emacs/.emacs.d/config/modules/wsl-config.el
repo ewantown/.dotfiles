@@ -24,6 +24,8 @@
 ;; Make Magit useable across the Windows/Linux air-gap
 
 (defun et-init-magit-switch ()
+  "Overwrite magit functions with git.exe-from-WSL-friendly alternatives,
+and add advice to dynamically adjust the executable before magit execution."
   (with-eval-after-load 'magit
     (fset 'magit-git-string #'et-magit-git-str)
     (fset 'magit-git-str #'et-magit-git-str)
