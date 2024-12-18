@@ -1,6 +1,6 @@
 ;; -*- lexical-binding: t -*-
 ;; Development configuration
-;==============================================================================
+;;==============================================================================
 (require 'utils)
 
 (defun et-init-dev (stem langs)
@@ -8,7 +8,7 @@
   (et-init-prog)
   (mapc (lambda (sym) (funcall (symbol-function sym))) langs))
 
-;==============================================================================
+;;==============================================================================
 ;; General programming config
 
 (defun et-schemify-mode-map (a-lisp2-mode-map)
@@ -91,7 +91,7 @@
 	      (et-schemify-mode-map emacs-lisp-mode-map)	    
 	      ))
 
-					;===============================================================================
+  ;;============================================================================
   ;; Lisps/Schemes/etc.
 
   (defun l-racket ()
@@ -140,7 +140,7 @@
   (setq inferior-lisp-program "/opt/homebrew/bin/sbcl")
   (et-schemify-mode-map lisp-mode-map))
 
-;===============================================================================
+;;===============================================================================
 ;; JS/TS
 
 (defun l-latex ()
@@ -189,7 +189,7 @@
 	  web-mode-enable-css-colorization t
 	  web-mode-enable-current-element-highlight t)))
 
-;==============================================================================
+;;==============================================================================
 ;; SQL
 (defun l-sql ()
   (use-package sql
@@ -234,7 +234,7 @@
 		(insert (et-sql-connection-string dbms inst))
 		(comint-send-input)))
 	  (select-window window))))))
-;==============================================================================
+;;==============================================================================
 ;; C# / .NET
 (defun l-csharp ()
   (use-package csharp-mode
@@ -244,7 +244,7 @@
 	(add-to-list 'eglot-server-programs '(csharp-ts-mode . ("csharp-ls")))
 	:hook ((csharp-mode csharp-ts-mode) . eglot-ensure)))
 
-;==============================================================================
+;;==============================================================================
 ;; Markup langs
 (defun l-xml ()
   (use-package nxml
@@ -263,5 +263,32 @@
   (use-package yaml-mode
 	:mode ("\\.yml\\'" "\\.yaml\\'")))
 
-;==============================================================================
+;;==============================================================================
+;; Java
+(defun l-java ()
+  (setcdr (assoc '(java-mode java-ts-mode) eglot-server-programs)
+          `(
+	    "/mnt/c/Program Files/Git/bin/bash.exe -c java"
+            "-Declipse.application=org.eclipse.jdt.ls.core.id1"
+            "-Dosgi.bundles.defaultStartLevel=4"
+            "-Declipse.product=org.eclipse.jdt.ls.core.product"
+            "-Dlog.level=ALL"
+            "-noverify"
+            "-Xmx256m"
+            "-jar"
+            "/c/Eclipse462/dropins/jdtls-jdk8/plugins/org.eclipse.equinox.launcher_1.5.700.v20200207-2156.jar"
+            "-configuration"
+            "/c/Eclipse462/dropins/jdtls-jdk8/config_win"
+            "-data"
+            "/c/Users/ET20469/jdtls-cache"
+	    ;;"jdtls" "-data" "/home/user/.cache/emacs/workspace/"
+            ;;"-javaagent:/home/user/work/src/lombok.jar"
+            ;;"-Xbootclasspath/a:/home/user/work/src/lombok.jar"
+            ;;"--jvm-arg=-XX:+UseG1GC"
+            ;;"--jvm-arg=-XX:+UseStringDeduplication"
+            ;;"-Djava.format.settings.url=file:///home/user/code-format.xml"
+            ;;"-Djava.format.settings.profile=myown"
+	    )))
+
+;;==============================================================================
 (provide 'dev-config)
