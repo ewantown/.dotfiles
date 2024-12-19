@@ -77,8 +77,10 @@
 (defvar nice-org-html-theme-alist '((light . tsdh-light) (dark . tsdh-dark))
   "Associates light and dark view modes with Emacs themes.")
 
-(defvar nice-org-html-default-mode 'dark
-  "Default nice HTML page view mode ((quote light) or (quote dark)).")
+(defvar nice-org-html-default-mode 'query
+  "Default nice HTML page viewing mode.
+One of: ((quote light) or (quote dark)) or (quote query).
+If (quote query), get for browser-set preference, fallback: (quote dark).")
 
 (defvar nice-org-html-headline-bullets nil
   "If non-nil, headlines are prefixed with bullets.
@@ -258,8 +260,12 @@ Else, bullets are strings, b1...b5, specified by plist of form:
      (buffer-string))
    "<script type=\"text/javascript\">\n"
    "<!--/*--><![CDATA[/*><!--*/\n"
-   "document.cookie = 'theme-mode="
-   (if (eq nice-org-html-default-mode 'light) "light" "dark") "'\n"
+   "if (!document.cookie.split('; ').find(r => r.startsWith('mode'))) {\n"
+   "document.cookie = 'mode=" (symbol-name nice-org-html-default-mode) "'\n}\n"
+   "document.cookie = 'light="
+   (symbol-name (cdr (assoc 'light nice-org-html-theme-alist))) "'\n"
+   "document.cookie = 'dark="
+   (symbol-name (cdr (assoc 'dark  nice-org-html-theme-alist))) "'\n"
    (with-temp-buffer
      (insert-file-contents nice-org-html--base-js)
      (when (and (not (equal "" nice-org-html-js))

@@ -307,16 +307,48 @@
       (setq org-publish-project-alist
 	    (et-get-org-publish-project-alist stem))
       )))
+
+(defun et-nice-org-html-sample-project (stem id light-thm dark-thm)
+  (let* ((basedir (concat stem "local/repos/nice-org-html/docs/samples/source/"))
+	 (pubdir  (concat stem "local/repos/nice-org-html/docs/samples/" id "/"))
+	 (header  (concat basedir "header.html"))
+	 (footer  (concat basedir "footer.html"))
+	 (style   (concat basedir "style.css"))
+	 (pubfn
+	  (nice-org-html-make-publishing-function
+	   `((light . ,light-thm) (dark . ,dark-thm))
+	   'dark
+	   nil header footer style "")))
+    `(,(format "nice-org-html/sample/%s" id)
+      :base-directory ,basedir
+      :base-extension "org"
+      :publishing-directory ,pubdir      
+      :htmlized-source t
+      :headline-levels 5
+      :section-numbers nil
+      :with-entities t
+      :with-latex t
+      :with-toc t
+      :with-author nil
+      :with-creator nil
+      :with-date nil
+      :with-email nil
+      :time-stamp-file nil
+      :publishing-function ,pubfn)))
+
 (defun et-get-org-publish-project-alist (stem)
   (match system-type
 	 ('darwin
 	  `(
-	    ("nice-org-html/docs"
-	     :base-directory ,(concat stem "local/repos/nice-org-html/docs/sample/")
+	    ("nice-org-html/readme"
+	     :base-directory
+	     ,(concat stem "local/repos/nice-org-html/docs/")	     
+	     :publishing-directory
+	     ,(concat stem "local/repos/nice-org-html/docs/")
 	     :base-extension "org"
-	     :publishing-directory ,(concat stem "local/repos/nice-org-html/docs/")
+	     :recursive nil
 	     :htmlized-source t
-	     :headline-levels 5
+	     :headline-levels 3
 	     :section-numbers nil
 	     :with-entities t
 	     :with-latex t
@@ -328,13 +360,40 @@
 	     :time-stamp-file nil
 	     :publishing-function
 	     ,(nice-org-html-make-publishing-function
-	       '((dark . tomorrow-night-eighties) (light . solo-jazz))
+	       '((dark . tomorrow-night-eighties) (light . solarized-light))
 	       'dark
-	       nil
+	       '(:h1 "" :h2 "▷" :h3 "" :h4 "" :h5 "")
 	       (concat stem "local/repos/nice-org-html/docs/sample/header.html")
 	       (concat stem "local/repos/nice-org-html/docs/sample/footer.html")
 	       (concat stem "local/repos/nice-org-html/docs/sample/style.css")
 	       "")
+	     )
+	    ,(et-nice-org-html-sample-project
+	      stem "tsdh" 'tsdh-light 'tsdh-dark)
+	    ,(et-nice-org-html-sample-project
+	      stem "ample-zenburn" 'ample-light 'zenburn)
+	    ,(et-nice-org-html-sample-project
+	      stem "eighties-jazz" 'solo-jazz 'tomorrow-night-eighties)
+	    ,(et-nice-org-html-sample-project
+	      stem "tomorrow" 'tomorrow-day 'tomorrow-night)
+	    ,(et-nice-org-html-sample-project
+	      stem "solarized" 'solarized-light 'solarized-dark)
+	    ,(et-nice-org-html-sample-project
+	      stem "spacemacs" 'spacemacs-light 'spacemacs-dark)
+	    ,(et-nice-org-html-sample-project
+	      stem "leuven" 'leuven 'leuven-dark)
+	    ,(et-nice-org-html-sample-project
+	      stem "modus" 'modus-operandi 'modus-vivendi)
+	    ("nice-org-html/docs"
+	     :components ("nice-org-html/readme"
+			  "nice-org-html/sample/tsdh"
+			  "nice-org-html/sample/ample-zenburn"
+			  "nice-org-html/sample/eighties-jazz"
+			  "nice-org-html/sample/tomorrow"
+			  "nice-org-html/sample/solarized"
+			  "nice-org-html/sample/spacemacs"
+			  "nice-org-html/sample/leuven"
+			  "nice-org-html/sample/modus")
 	     )
 	    ("etown.dev/files"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/")
@@ -344,7 +403,7 @@
 	     :recursive t
 	     :auto-sitemap t
 	     :sitemap-title "Sitemap"
-	     :headline-levels 1
+	     :headline-levels 3
 	     :section-numbers nil
 	     :with-entities t
 	     :with-latex t
@@ -356,9 +415,9 @@
 	     :time-stamp-file nil
 	     :publishing-function
 	     ,(nice-org-html-make-publishing-function
-	       '((dark . tomorrow-night-eighties) (light . solo-jazz))
+	       '((dark . spacemacs-dark) (light . spacemacs-light))
 	       'dark
-	       nil
+	       '(:h1 "" :h2 "" :h3 "▷" :h4 "" :h5 "")
 	       (concat stem "local/repos/etown.dev/org/base/header.html")
 	       (concat stem "local/repos/etown.dev/org/base/footer.html")
 	       (concat stem "local/repos/etown.dev/org/base/style.css")
@@ -376,8 +435,7 @@
 	     :publishing-function org-publish-attachment)
 	    ("etown.dev"
 	     :components ("etown.dev/files" "etown.dev/images" "etown.dev/other"))
-	    )
-	  )
+	    ))
 	 ('gnu/linux  '())
 	 ('windows-nt '())))
 
