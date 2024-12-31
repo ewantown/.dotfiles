@@ -309,16 +309,28 @@
       )))
 
 (defun et-nice-org-html-sample-project (stem id light-thm dark-thm)
-  (let* ((basedir (concat stem "local/repos/nice-org-html/docs/samples/source/"))
-	 (pubdir  (concat stem "local/repos/nice-org-html/docs/samples/" id "/"))
-	 (header  (concat basedir "header.html"))
-	 (footer  (concat basedir "footer.html"))
-	 (style   (concat basedir "style.css"))
+  (let* ((basedir
+	  (concat stem "local/repos/nice-org-html/docs/samples/source/"))
+	 (pubdir
+	  (concat stem "local/repos/nice-org-html/docs/samples/" id "/"))
+	 (header
+          '(("SITE NAME" . "/route/to/home.html")
+            ("Foo" . "/route/to/foo.html")
+            ("Bar" . "/route/to/bar.html")
+            ("Baz" . "/route/to/baz.html")))
+	 (footer 
+          '(("© Ewan Townshend" . "mailto:e@etown.dev")
+            ("GitHub" . "https://github.com/ewantown")
+            ("LinkedIn" . "https://linkedin.com/in/ewan-townshend")))
+	 (theme-alist (list (cons 'light light-thm) (cons 'dark dark-thm)))
+	 (default-mode 'dark)
+	 (headline-bullets (list :h1 "1" :h2 "2" :h3 "3" :h4 "4" :h5 "5"))
 	 (pubfn
 	  (nice-org-html-make-publishing-function
 	   `((light . ,light-thm) (dark . ,dark-thm))
 	   'dark
-	   nil header footer style "")))
+	   nil header footer "" ""
+	   '(:collapsing t))))
     `(,(format "nice-org-html/sample/%s" id)
       :base-directory ,basedir
       :base-extension "org"
@@ -334,7 +346,8 @@
       :with-date nil
       :with-email nil
       :time-stamp-file nil
-      :publishing-function ,pubfn)))
+      :publishing-function ,pubfn
+      )))
 
 (defun et-get-org-publish-project-alist (stem)
   (match system-type
@@ -358,18 +371,15 @@
 	     :with-date nil
 	     :with-email nil
 	     :time-stamp-file nil
-	     :publishing-function
-	     ,(nice-org-html-make-publishing-function
-	       '((dark . tomorrow-night-eighties) (light . solarized-light))
-	       'dark
-	       '(:h1 "" :h2 "▷" :h3 "" :h4 "" :h5 "")
-	       (concat stem "local/repos/nice-org-html/docs/sample/header.html")
-	       (concat stem "local/repos/nice-org-html/docs/sample/footer.html")
-	       (concat stem "local/repos/nice-org-html/docs/sample/style.css")
-	       "")
+	     :publishing-function	     
+	     ,(nice-org-html-publishing-function
+	       :theme-alist
+	       ((light . solarized-light) (dark . tomorrow-night-eighties))
+	       :default-mode dark
+	       :headline-bullets (:h1 "" :h2 "▷" :h3 "" :h4 "" :h5 ""))
 	     )
 	    ,(et-nice-org-html-sample-project
-	      stem "tsdh" 'tsdh-light 'tsdh-dark)
+	       stem "tsdh" 'tsdh-light 'tsdh-dark)
 	    ,(et-nice-org-html-sample-project
 	      stem "ample-zenburn" 'ample-light 'zenburn)
 	    ,(et-nice-org-html-sample-project

@@ -16,10 +16,12 @@
 		     (lambda () (interactive)
 		       (progn (insert "(lambda ())") (backward-char 2))))
 	 (define-key a-lisp2-mode-map (kbd "C-M-;")
-		     (lambda () (interactive) (progn (insert "funcall "))))))
+		     (lambda () (interactive)
+		       (progn (insert "(funcall )") (backward-char 1))))))
 
 (defun et-init-prog ()
   "Initialize all programming modes"
+  (interactive)
   (message "Initializing prog modes")
   (use-package magit)
 					;(use-package projectile)
@@ -38,7 +40,7 @@
     :bind
     (:map paredit-mode-map
 	  ("M-<right>" . paredit-forward-slurp-sexp)
-	  ("M-<left>" . paredit-forward-barf-sexp)))  
+	  ("M-<left>" . paredit-forward-barf-sexp)))
   (use-package company
     :bind
     (:map company-active-map
@@ -85,52 +87,50 @@
 	      (treesit-auto-mode 1)
 	      (setq prettify-symbols-alist
 		    '(("lambda" . 955)	;?λ
-		      ("funcall " . ?:)
-		      ))
+		      ("funcall" . ?⦿)))		      
 	      (prettify-symbols-mode 1)
-	      (et-schemify-mode-map emacs-lisp-mode-map)	    
-	      ))
+	      (et-schemify-mode-map emacs-lisp-mode-map))))
 
-  ;;============================================================================
-  ;; Lisps/Schemes/etc.
+;;============================================================================
+;; Lisps/Schemes/etc.
 
-  (defun l-racket ()
-    "Initialize Racket dev env"
-    (message "Initializing Racket mode")
-    (use-package racket-mode
-      :config
-      (racket-unicode-input-method-enable)
-      (setq racket-images-inline t)
-      (add-hook 'racket-mode-hook 'racket-xp-mode)
-      (let ((def-racket-key
-	     (lambda (str fun &optional repl)
-	       (progn
-		 (define-key racket-mode-map (kbd str) fun)
-		 (when repl (define-key racket-repl-mode-map (kbd str) fun))))))
-	(progn (funcall def-racket-key "C-M-y"
-		 (lambda () (interactive)
-		   (progn (insert "(lambda ())") (backward-char 2))))
-	       (funcall def-racket-key "C-x C-e" 'racket-eval-last-sexp)
-	       (funcall def-racket-key "C-M-<return>" 'racket-run)
-	       (funcall def-racket-key "C-c t" (lambda () (interactive) (insert "⊤")) t)
-	       (funcall def-racket-key "C-c f" (lambda () (interactive) (insert "⊥")) t)
-	       (funcall def-racket-key "C-c n" (lambda () (interactive) (insert "¬")) t)
-	       (funcall def-racket-key "C-c a" (lambda () (interactive) (insert "∧")) t)
-	       (funcall def-racket-key "C-c o" (lambda () (interactive) (insert "∨")) t)
-	       (funcall def-racket-key "C-c p" (lambda () (interactive) (insert "φ")) t)
-	       (funcall def-racket-key "C-c e" (lambda () (interactive) (insert "≡")) t)))))
+(defun l-racket ()
+  "Initialize Racket dev env"
+  (message "Initializing Racket mode")
+  (use-package racket-mode
+    :config
+    (racket-unicode-input-method-enable)
+    (setq racket-images-inline t)
+    (add-hook 'racket-mode-hook 'racket-xp-mode)
+    (let ((def-racket-key
+	   (lambda (str fun &optional repl)
+	     (progn
+	       (define-key racket-mode-map (kbd str) fun)
+	       (when repl (define-key racket-repl-mode-map (kbd str) fun))))))
+      (progn (funcall def-racket-key "C-M-y"
+	       (lambda () (interactive)
+		 (progn (insert "(lambda ())") (backward-char 2))))
+	     (funcall def-racket-key "C-x C-e" 'racket-eval-last-sexp)
+	     (funcall def-racket-key "C-M-<return>" 'racket-run)
+	     (funcall def-racket-key "C-c t" (lambda () (interactive) (insert "⊤")) t)
+	     (funcall def-racket-key "C-c f" (lambda () (interactive) (insert "⊥")) t)
+	     (funcall def-racket-key "C-c n" (lambda () (interactive) (insert "¬")) t)
+	     (funcall def-racket-key "C-c a" (lambda () (interactive) (insert "∧")) t)
+	     (funcall def-racket-key "C-c o" (lambda () (interactive) (insert "∨")) t)
+	     (funcall def-racket-key "C-c p" (lambda () (interactive) (insert "φ")) t)
+	     (funcall def-racket-key "C-c e" (lambda () (interactive) (insert "≡")) t)))))
 
-  (defun l-chez ()
-    "Initialize Chez Scheme dev env"
-    (message "Initializing Chez Scheme mode")
-    (use-package geiser-chez
-      :hook scheme-mode
-      :bind
-      (:map scheme-mode-map
-	    ("C-x C-e" . geiser-eval-last-sexp)
-	    ("C-M-y" .
-	     (lambda () (interactive)
-	       (progn (insert "(lambda ())") (backward-char 2))))))))
+(defun l-chez ()
+  "Initialize Chez Scheme dev env"
+  (message "Initializing Chez Scheme mode")
+  (use-package geiser-chez
+    :hook scheme-mode
+    :bind
+    (:map scheme-mode-map
+	  ("C-x C-e" . geiser-eval-last-sexp)
+	  ("C-M-y" .
+	   (lambda () (interactive)
+	     (progn (insert "(lambda ())") (backward-char 2)))))))
 
 (defun l-sbcl ()
   "Initialize SBCL (Common Lisp) dev env (Sly)"
