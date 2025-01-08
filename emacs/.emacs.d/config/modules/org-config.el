@@ -424,14 +424,21 @@
 	     :with-email nil
 	     :time-stamp-file nil
 	     :publishing-function
-	     ,(nice-org-html-make-publishing-function
-	       '((dark . spacemacs-dark) (light . spacemacs-light))
-	       'dark
-	       '(:h1 "" :h2 "" :h3 "▷" :h4 "" :h5 "")
-	       (concat stem "local/repos/etown.dev/org/base/header.html")
-	       (concat stem "local/repos/etown.dev/org/base/footer.html")
-	       (concat stem "local/repos/etown.dev/org/base/style.css")
-	       "")
+	     ,(nice-org-html-publishing-function
+	       :theme-alist
+	       ((dark . spacemacs-dark) (light . spacemacs-light))
+	       :default-mode dark
+	       :headline-bullets (:h1 "" :h2 "" :h3 "▷" :h4 "" :h5 "")
+	       :header
+	       (("Ewan Townshend" . "home")
+		("About" . "about")
+		("Projects" . "projects")
+		("Thoughts" . "thoughts"))
+	       :footer
+	       (("© 2025" . nil)
+		("Email" . "mailto:ewan@etown.dev")
+		("LinkedIn" . "https://www.linkedin.com/in/ewan-townshend")
+		("Resumé" . "file:./other/sw-resume.pdf")))
 	     )
 	    ("etown.dev/images"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/images/")
