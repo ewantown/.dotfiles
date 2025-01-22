@@ -64,7 +64,7 @@
   ; TODO - port general linux config
   (when (getenv "WSL_DISTRO_NAME")
     (progn (require 'wsl-config) (et-init-wsl CONF STEM))
-    (setq LANGS '(l-csharp l-yaml l-xml l-sql))))
+    (setq LANGS '(l-yaml l-xml l-sql))))
 
 ;==============================================================================
 (require 'gui-config) ; user interface

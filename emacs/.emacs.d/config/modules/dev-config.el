@@ -1,3 +1,4 @@
+
 ;; -*- lexical-binding: t -*-
 ;; Development configuration
 ;;==============================================================================
@@ -236,13 +237,20 @@
 	  (select-window window))))))
 ;;==============================================================================
 ;; C# / .NET
-(defun l-csharp ()
-  (use-package csharp-mode
-	:mode ("\\.cs\\'")
-	:init
-	(add-to-list 'eglot-server-programs '(csharp-mode . ("csharp-ls")))
-	(add-to-list 'eglot-server-programs '(csharp-ts-mode . ("csharp-ls")))
-	:hook ((csharp-mode csharp-ts-mode) . eglot-ensure)))
+
+
+;; (defun l-csharp ()
+;;   (use-package csharp-mode
+;;     :mode ("\\.cs\\'")
+;;     :init
+;;     (let ((path "~/.dotnet/tools/csharp-ls"))
+;;       ;;(add-to-list 'eglot-server-programs '(csharp-mode . ("csharp-ls")))
+;;       ;;(add-to-list 'eglot-server-programs '(csharp-ts-mode . ("csharp-ls")))
+;;       (setcdr (assoc '(csharp-mode csharp-ts-mode) eglot-server-programs)
+;; 	      `(,path))
+;;       (setcdr (assoc 'csharp-mode eglot-server-programs) `(,path))
+;;       (setcdr (assoc 'csharp-ts-mode eglot-server-programs) `(,path)))
+;;     :hook ((csharp-mode csharp-ts-mode) . eglot-ensure)))
 
 ;;==============================================================================
 ;; Markup langs
@@ -265,7 +273,7 @@
 
 ;;==============================================================================
 ;; Java
-(defun l-java ()
+(defun l-java ()  
   (setcdr (assoc '(java-mode java-ts-mode) eglot-server-programs)
           `(
 	    "/mnt/c/Program Files/Git/bin/bash.exe -c java"
