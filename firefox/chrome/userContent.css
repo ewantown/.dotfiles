@@ -4,8 +4,7 @@
     .click-target-container *, .top-sites-list * {
         color: #fff !important ;
         text-shadow: 2px 2px 2px #222 !important ;
-    }
-
+    }    
     body::before {
         content: "" ;
         z-index: -1 ;
@@ -13,8 +12,10 @@
         top: 0 ;
         left: 0 ;        
         background:
-	    no-repeat url("logo.svg") center,
+	    /*no-repeat url("wolf5.svg") center,*/	    
+	    /*no-repeat url("logo.svg") center,*/
 	    no-repeat #2a2826 url("circ2.gif") center / 711px auto;
+	    /*no-repeat #2a2826 url("wolf4.svg") center / 88px auto;*/
         width: 100vw ;
         height: 100vh ;
     }
@@ -47,3 +48,6 @@ html body.activity-stream div#root div menu.personalizeButtonWrapper span button
     opacity:0 !important;
 }
 
+body.activity-stream {
+    overflow: hidden !important;
+}
