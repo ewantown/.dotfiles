@@ -330,7 +330,7 @@
 	   `((light . ,light-thm) (dark . ,dark-thm))
 	   'dark
 	   nil header footer "" ""
-	   '(:collapsing t))))
+	   '(:collapsing t :src-lang t))))
     `(,(format "nice-org-html/sample/%s" id)
       :base-directory ,basedir
       :base-extension "org"
@@ -435,10 +435,12 @@
 		("Projects" . "projects")
 		("Thoughts" . "thoughts"))
 	       :footer
-	       (("© 2025" . nil)
-		("Email" . "mailto:ewan@etown.dev")
+	       (("© 2025" . nil)				
 		("LinkedIn" . "https://www.linkedin.com/in/ewan-townshend")
-		("Resumé" . "file:./other/sw-resume.pdf")))
+		("GitHub" . "https://github.com/ewantown")
+		("Resumé" . "other/sw-resume.pdf")
+		("Email" . "mailto:ewan@etown.dev"))
+	       )
 	     )
 	    ("etown.dev/images"
 	     :base-directory ,(concat stem "local/repos/etown.dev/org/images/")

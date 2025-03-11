@@ -31,7 +31,7 @@
 (setq package-enable-at-startup t)
 (setq package-archives
       '(
-	;("gnu" . "http://elpa.gnu.org/packages/")
+	("gnu" . "http://elpa.gnu.org/packages/")
 	;("melpa-stable" . "http://stable.melpa.org/packages/")
 	("melpa" . "http://melpa.org/packages/")
 	;("org" . "http://orgmode.org/elpa/")

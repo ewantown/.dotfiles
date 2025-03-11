@@ -96,6 +96,7 @@
 
 (defun l-racket ()
   "Initialize Racket dev env"
+  (interactive)
   (message "Initializing Racket mode")
   (use-package racket-mode
     :config
@@ -109,24 +110,32 @@
 	       (when repl (define-key racket-repl-mode-map (kbd str) fun))))))
       (progn (funcall def-racket-key "C-M-y"
 	       (lambda () (interactive)
-		 (progn (insert "(lambda ())") (backward-char 2))))
-	     (funcall def-racket-key "C-x C-e" 'racket-eval-last-sexp)
-	     (funcall def-racket-key "C-M-<return>" 'racket-run)
+		 (progn (insert "(λ ())") (backward-char 2))))
+	     (funcall def-racket-key "C-x C-e" 'racket-eval-last-sexp)	     
+	     (funcall def-racket-key "C-M-<return>" 'racket-run)	     
+	     (funcall def-racket-key "C-c r" (lambda () (interactive) (insert "ρ")) t)
+	     (funcall def-racket-key "C-c s" (lambda () (interactive) (insert "σ")) t)
+	     (funcall def-racket-key "C-c d" (lambda () (interactive) (insert "•")) t)
+	     (funcall def-racket-key "C-c -" (lambda () (interactive) (insert "→")) t)
+	     (funcall def-racket-key "C-c c" (lambda () (interactive) (insert "▷")) t)	     
+	     (funcall def-racket-key "C-c e" (lambda () (interactive) (insert "ε")) t) 
+	     (funcall def-racket-key "C-c b" (lambda () (interactive) (insert "□")) t)
 	     (funcall def-racket-key "C-c t" (lambda () (interactive) (insert "⊤")) t)
 	     (funcall def-racket-key "C-c f" (lambda () (interactive) (insert "⊥")) t)
 	     (funcall def-racket-key "C-c n" (lambda () (interactive) (insert "¬")) t)
 	     (funcall def-racket-key "C-c a" (lambda () (interactive) (insert "∧")) t)
 	     (funcall def-racket-key "C-c o" (lambda () (interactive) (insert "∨")) t)
 	     (funcall def-racket-key "C-c p" (lambda () (interactive) (insert "φ")) t)
-	     (funcall def-racket-key "C-c e" (lambda () (interactive) (insert "≡")) t)))))
+	     (funcall def-racket-key "C-c =" (lambda () (interactive) (insert "≡")) t)))))
 
 (defun l-chez ()
   "Initialize Chez Scheme dev env"
+  (interactive)
   (message "Initializing Chez Scheme mode")
   (use-package geiser-chez
     :hook scheme-mode
     :bind
-    (:map scheme-mode-map
+    (:map scheme-mode-map	  
 	  ("C-x C-e" . geiser-eval-last-sexp)
 	  ("C-M-y" .
 	   (lambda () (interactive)
@@ -140,17 +149,25 @@
   (setq inferior-lisp-program "/opt/homebrew/bin/sbcl")
   (et-schemify-mode-map lisp-mode-map))
 
+(defun l-clojure ()
+  "Initialize Clojure dev env"
+  (interactive)
+  (message "Initializing Clojure mode")
+  (use-package clojure-mode)
+  (use-package cider))
 ;;===============================================================================
 ;; JS/TS
 
 (defun l-latex ()
   "Initialize latex environment"
+  (interactive)
   (message "Initializing LaTeX mode")	       
   (add-to-list 'eglot-server-programs
 	       '((latex-mode) "texlab")))
 
 (defun l-typescript ()
   "Initialize TypeScript dev env"
+  (interactive)
   (message "Initializing TypeScript mode")
   (ignore-errors (eglot-ensure))
   (assq-delete-all 'typescript-mode eglot-server-programs)
@@ -170,6 +187,7 @@
 
 (defun l-javascript ()
   "Initialize JavaScript dev env"
+  (interactive)
   (message "Initializing JavaScript mode")
   ;; Use TS modes for JS editing
   (assq-delete-all 'javascript-mode eglot-server-programs)
@@ -179,6 +197,8 @@
   (l-typescript))
 
 (defun l-web ()
+  "Initialize web-dev env"
+  (interactive)
   (use-package web-mode
     :mode ("\\.html\\'" "\\.php\\'" "\\.erb\\'")
     :config
@@ -192,11 +212,13 @@
 ;;==============================================================================
 ;; SQL
 (defun l-sql ()
+  "Initialize SQL env"
+  (interactive)
   (use-package sql
     :config
     (setq sql-db2-program "/mnt/d/SQLLIB/BIN/db2cmd.exe"
 	  sql-db2-options '("-c" "-i" "-w" "db2" "-tv"))
-    (defalias 'sql-get-login 'ignore) ; login with connection string
+    (defalias 'sql-get-login 'ignore)	; login with connection string
     (advice-add 'sql-send-paragraph :before 'et-db-connect)))
 
 (defconst et-dbms-alist
