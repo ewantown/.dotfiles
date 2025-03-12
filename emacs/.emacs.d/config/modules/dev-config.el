@@ -210,6 +210,10 @@
 	  web-mode-enable-css-colorization t
 	  web-mode-enable-current-element-highlight t)))
 
+(defun l-nix ()
+  (interactive)
+  (use-package nix-mode
+    :mode ("\\.nix\\'" "\\.nix.in\\'")))
 ;;==============================================================================
 ;; SQL
 (defun l-sql ()

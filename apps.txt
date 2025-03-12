@@ -1,0 +1,25 @@
+_Setup_
+install nix
+	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+See: https://noghartt.dev/blog/set-up-nix-on-macos-using-flakes-nix-darwin-and-home-manager/	
+
+_CLI_
+Nix (from Determinate Systems), then:
+GNU stow
+Emacs
+
+_GUI_
+amphetamine
+bitwarden
+clipy
+discord
+electronmail
+emacs
+iterm
+karabiner
+LIBreoffice
+librewolf
+mullvad
+slack
+spectacle
+spotify
