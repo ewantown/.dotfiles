@@ -25,7 +25,7 @@
         specialArgs = { inherit inputs; };
         
         modules = [
-          ./hosts/mba/system.nix
+          ./hosts/mba/configuration.nix
           inputs.home-manager.darwinModules.home-manager
           {
             nixpkgs = nixpkgsConfig;
