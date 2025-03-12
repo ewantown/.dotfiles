@@ -31,7 +31,7 @@
             modules = [
               inputs.nix-homebrew.darwinModules.nix-homebrew
               inputs.home-manager.darwinModules.home-manager
-              ./.nix/hosts/mba/system.nix
+              ./.nix/hosts/mba/configuration.nix
               {
                 nixpkgs = nixpkgsConfig;
                 
