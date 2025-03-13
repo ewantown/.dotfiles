@@ -6,7 +6,7 @@ _:
 
 #    enableRosetta = true;
 
-    user = "et";
+    user = "ET";
 
     autoMigrate = true;
   };
