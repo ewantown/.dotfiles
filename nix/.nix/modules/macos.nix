@@ -27,7 +27,7 @@
             app = "/Applications/Emacs.app";
           }
           {
-            app = "/Applications/Nix Apps/Librewolf.app";
+            app = "/Applications/Librewolf.app";
           }
           {
             app = "/Applications/Spotify.app";
@@ -78,7 +78,7 @@
     keyboard = {
       enableKeyMapping = true;
       remapCapsLockToControl = true;
-      swapLeftCommandAndLeftAlt = true;  
+      #swapLeftCommandAndLeftAlt = true;  
     };
   };
 

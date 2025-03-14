@@ -2,7 +2,6 @@
 {
   environment.systemPackages = with pkgs; [
     stow
-    librewolf
   ];
   environment.variables = {
     EDITOR = "emacs -nw";
@@ -43,6 +42,7 @@
       #"ollama"
     ];
     casks = [
+      "librewolf"
       "emacs"
       "clipy"
       "rectangle"
