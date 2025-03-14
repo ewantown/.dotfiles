@@ -25,7 +25,7 @@
   (interactive)
   (message "Initializing prog modes")
   (use-package magit)
-					;(use-package projectile)
+  ;;(use-package projectile)
   (use-package helm-projectile
     :bind ("C-x C-p" . 'helm-projectile))
   (use-package treemacs

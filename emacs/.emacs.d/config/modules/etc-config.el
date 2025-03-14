@@ -42,18 +42,24 @@
   ;;   ((chatgpt-shell-openai-key (getenv "TAI_KEY"))
   ;;    (chatgpt-shell-api-url-base "api.together.ai")
   ;;    (chatgpt-shell-model-version "mistralai/Mixtral-8x7B-Instruct-v0.1")))
-  (use-package gptel
+  (use-package gptel    
     :config
-    (progn
-      (setq gptel-model "mistralai/Mixtral-8x7B-Instruct-v0.1"
-            gptel-backend
-            (gptel-make-openai "HAL"
-	      :host "api.together.ai"
-	      :key (getenv "TAI_KEY")
-	      :stream t
-	      :models '("mistralai/Mixtral-8x7B-Instruct-v0.1"
-			"codellama/CodeLlama-13b-Instruct-hf"
-			"codellama/CodeLlama-34b-Instruct-hf"))))))
+    (async-shell-command "ollama serve")
+    (setq gptel-model 'llama3
+	  gptel-backend (gptel-make-ollama "ollama"
+			  :host "localhost:11434"
+			  :stream t
+			  :models '(llama3)))
+    ;; (setq gptel-model "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    ;;       gptel-backend
+    ;;       (gptel-make-openai "HAL"
+    ;; 	    :host "api.together.ai"
+    ;; 	    :key (getenv "TAI_KEY")
+    ;; 	    :stream t
+    ;; 	    :models '("mistralai/Mixtral-8x7B-Instruct-v0.1"
+    ;; 		      "codellama/CodeLlama-13b-Instruct-hf"
+    ;; 		      "codellama/CodeLlama-34b-Instruct-hf")))
+    ))
 
 
 ;(use-package wolfram

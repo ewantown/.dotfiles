@@ -14,8 +14,15 @@
     };
   };
 
-  programs = {
+  programs = {    
     home-manager.enable = true;
+
+    zsh = {
+      enable = true;
+      initExtra = ''
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+      '';
+    };
     
     git = {
       enable = true;

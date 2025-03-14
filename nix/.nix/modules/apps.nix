@@ -36,17 +36,16 @@
     # Install from Mac App Store using mas
     # See https://github.com/mas-cli/mas
     masApps = {
-      Amphetamine = 937984704;      
+      Amphetamine = 937984704;
+      Bitwarden = 1352778147;
     };    
     brews = [
-      #"ollama"
+      "ollama"
     ];
     casks = [
       "librewolf"
       "emacs"
-      "clipy"
       "rectangle"
-      "bitwarden"
       "spotify"
       "discord"
       "slack"

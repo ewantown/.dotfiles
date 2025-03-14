@@ -74,6 +74,11 @@
 (require 'patches)
 (patch)
 
+(use-package exec-path-from-shell
+  :config
+  (when (memq window-system '(max ns x))
+    (exec-path-from-shell-initialize)))
+
 ;; Main dispatch
 (cond ((display-graphic-p)
        (progn (et-init-gui CONF)
